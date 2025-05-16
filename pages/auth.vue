@@ -1,74 +1,99 @@
+
+
 <template>
-    <div id="AuthPage" class="w-full h-[100vh] bg-white">
-        <div class="w-full flex items-center justify-center p-5 border-b border-b-gray-300">
-            <NuxtLink to="/" class="min-w-[170px]">
-                <img width="170" src="/AliExpress-logo.png">
-            </NuxtLink>
-        </div>
-
-        <div class="max-w-[400px] mx-auto px-2">
-
-            <div class="text-center my-6">Login / Register</div>
-
-            <button 
-                @click="login('google')"
-                class="
-                    flex 
-                    items-center 
-                    justify-center 
-                    gap-3
-                    p-1.5
-                    w-full 
-                    border 
-                    hover:bg-gray-100
-                    rounded-full
-                    text-lg
-                    font-semibold
-                "
-            >
-                <img class="w-full max-w-[30px]" src="/google-logo.png">
-                <div>Google</div>
-            </button>
-
-            <button 
-                @click="login('github')"
-                class="
-                mt-4
-                    flex 
-                    items-center 
-                    justify-center 
-                    gap-3
-                    p-1.5
-                    w-full 
-                    border 
-                    hover:bg-gray-100
-                    rounded-full
-                    text-lg
-                    font-semibold
-                "
-            >
-                <img class="w-full max-w-[30px]" src="/github-logo.png">
-                <div>Github</div>
-            </button>
-
-        </div>
+  <div id="AuthPage" class="w-full h-[100vh] bg-white">
+    <div class="w-full flex items-center justify-center p-5 border-b border-b-gray-300">
+      <NuxtLink to="/" class="min-w-[170px]">
+        <img width="170" src="/AliExpress-logo.png" />
+      </NuxtLink>
     </div>
+
+    <div class="max-w-[400px] mx-auto px-2">
+      <div class="text-center my-6 text-lg font-semibold">Login / Register</div>
+
+      <form @submit.prevent="handleSubmit" class="space-y-4">
+        <input
+          v-model="email"
+          type="email"
+          placeholder="Email"
+          class="w-full p-2 border rounded"
+        />
+        <input
+          v-model="password"
+          type="password"
+          placeholder="Password"
+          class="w-full p-2 border rounded"
+        />
+
+        <p v-if="errorMessage" class="text-red-500 text-sm text-center">{{ errorMessage }}</p>
+
+        <button
+          type="submit"
+          class="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+        >
+          {{ mode === 'login' ? 'Login' : 'Register' }}
+        </button>
+
+        <p class="text-center text-sm text-gray-600">
+          <span @click="toggleMode" class="text-blue-500 cursor-pointer underline">
+            {{ mode === 'login' ? 'Нет аккаунта? Зарегистрируйтесь' : 'Уже есть аккаунт? Войти' }}
+          </span>
+        </p>
+      </form>
+    </div>
+  </div>
 </template>
 
-<script setup>
-const client = useSupabaseClient()
-const user = useSupabaseUser()
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useCookie } from '#app'
+import { $fetch } from 'ofetch'
+import { useAuthStore } from '~/stores/auth'
 
-watchEffect(() => {
-    if (user.value) {
-        return navigateTo('/')
-    }
+const email = ref('')
+const password = ref('')
+const mode = ref<'login' | 'register'>('login')
+const errorMessage = ref('')
+const router = useRouter()
+const authToken = useCookie('auth_token')
+const authStore = useAuthStore()
+
+onMounted(() => {
+  authStore.fetchUser()
 })
 
-const login = async (prov) => {
-  const { data, error } = await client.auth.signInWithOAuth({
-    provider: prov,
-    redirectTo: window.location.origin
-  })
+const handleSubmit = async () => {
+  errorMessage.value = ''
+
+  if (!email.value || !password.value) {
+    errorMessage.value = 'Введите email и пароль'
+    return
+  }
+
+  try {
+    const res = await $fetch<{ success: boolean; token?: string; message?: string }>(
+      `/api/${mode.value}`,
+      {
+        method: 'POST',
+        body: { email: email.value, password: password.value }
+      }
+    )
+
+    if (res?.success && res?.token) {
+      authToken.value = res.token
+      await authStore.fetchUser()
+      router.push('/')
+    } else {
+      errorMessage.value = res?.message || 'Ошибка входа/регистрации'
+    }
+  } catch (err) {
+    errorMessage.value = 'Сервер не отвечает. Попробуйте позже.'
+  }
+}
+
+const toggleMode = () => {
+  mode.value = mode.value === 'login' ? 'register' : 'login'
+  errorMessage.value = ''
 }
 </script>

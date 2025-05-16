@@ -1,0 +1,25 @@
+import undetected_chromedriver as uc
+from bs4 import BeautifulSoup
+import time
+
+query = "usb gadget"
+url = f"https://www.aliexpress.com/wholesale?SearchText={query.replace(' ', '+')}"
+print("[+] Открываем:", url)
+
+driver = uc.Chrome(headless=True)
+driver.get(url)
+time.sleep(10)
+html = driver.page_source
+driver.quit()
+
+soup = BeautifulSoup(html, 'html.parser')
+
+selectors = [
+    "a._3t7zg._2f4Ho",
+    "a[data-role=product]",
+    ".manhattan--container--1lP57Ag",
+]
+
+for selector in selectors:
+    cards = soup.select(selector)
+    print(f"[+] Селектор `{selector}` нашёл: {len(cards)} карточек")

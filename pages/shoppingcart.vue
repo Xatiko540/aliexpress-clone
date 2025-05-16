@@ -109,61 +109,44 @@
     </MainLayout>
 </template>
 
-<script setup>
-import MainLayout from '~/layouts/MainLayout.vue';
-import { useUserStore } from '~/stores/user';
-const userStore = useUserStore()
-const user = useSupabaseUser()
+<script setup lang="ts">
+import { ref, computed, onMounted, toRaw } from 'vue'
+import { useUserStore } from '~/stores/user'
+import { useAuthStore } from '~/stores/auth'
 
-let selectedArray = ref([])
+const userStore = useUserStore()
+const authStore = useAuthStore()
+const user = computed(() => authStore.user)
+
+const selectedArray = ref<{ id: number }[]>([])
 
 onMounted(() => {
-    setTimeout(() => userStore.isLoading = false, 200)
+  setTimeout(() => {
+    userStore.isLoading = false
+  }, 200)
 })
 
-const cards = ref([
-    'visa.png',
-    'mastercard.png',
-    'paypal.png',
-    'applepay.png',
+const cards = ref<string[]>([
+  'visa.png',
+  'mastercard.png',
+  'paypal.png',
+  'applepay.png',
 ])
 
 const totalPriceComputed = computed(() => {
-    let price = 0
-    userStore.cart.forEach(prod => {
-        price += prod.price
-    })
-    return price / 100
+  return userStore.cart.reduce((acc, prod) => acc + prod.price, 0) / 100
 })
 
-const selectedRadioFunc = (e) => {
-
-    if (!selectedArray.value.length) {
-        selectedArray.value.push(e)
-        return
-    }
-
-    selectedArray.value.forEach((item, index) => {
-        if (e.id != item.id) {
-            selectedArray.value.push(e)
-        } else {
-            selectedArray.value.splice(index, 1);
-        }
-    })
+const selectedRadioFunc = (item: any) => {
+  const index = selectedArray.value.findIndex((i) => i.id === item.id)
+  if (index === -1) selectedArray.value.push(item)
+  else selectedArray.value.splice(index, 1)
 }
 
 const goToCheckout = () => {
-    let ids = []
-    userStore.checkout = []
-
-    selectedArray.value.forEach(item => ids.push(item.id))
-
-    let res = userStore.cart.filter((item) => {
-        return ids.indexOf(item.id) != -1
-    })
-
-    res.forEach(item => userStore.checkout.push(toRaw(item)))
-
-    return navigateTo('/checkout')
+  const ids = selectedArray.value.map((item) => item.id)
+  const filtered = userStore.cart.filter((item) => ids.includes(item.id))
+  userStore.checkout = filtered.map((item) => toRaw(item))
+  navigateTo('/checkout')
 }
 </script>
