@@ -40,23 +40,35 @@
     </MainLayout>
 </template>
 
-<script setup>
-import MainLayout from '~/layouts/MainLayout.vue';
-import { useUserStore } from '~/stores/user';
-const userStore = useUserStore()
-const user = useSupabaseUser()
+<script setup lang="ts">
+import { onBeforeMount, ref, computed } from 'vue'
+import { useUserStore } from '~/stores/user'
+import { useAuthStore } from '~/stores/auth'
+import { useRouter } from 'vue-router'
 
-let orders = ref(null)
+const userStore = useUserStore()
+const authStore = useAuthStore()
+const router = useRouter()
+
+const user = computed(() => authStore.user)
+const orders = ref([])
 
 onBeforeMount(async () => {
-    orders.value = await useFetch(`/api/prisma/get-all-orders-by-user/${user.value.id}`)
-})
+  if (!user.value) {
+    return router.push('/auth')
+  }
 
-onMounted(() => {
-    if (!user.value) {
-        return navigateTo('/auth')
+  try {
+    const { data, error } = await useAsyncData(() =>
+      $fetch(`/api/prisma/get-all-orders-by-user/${user.value.id}`)
+    )
+    if (error.value) {
+      console.error(error.value)
+    } else {
+      orders.value = data.value
     }
-
-    setTimeout(() => userStore.isLoading = false, 200)
+  } catch (err) {
+    console.error('Fetch failed:', err)
+  }
 })
 </script>

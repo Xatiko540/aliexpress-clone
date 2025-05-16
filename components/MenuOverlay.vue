@@ -75,7 +75,7 @@
                 </li>
 
                 <li 
-                    v-if="user" 
+                    v-if="authStore.user"
                     @click="signOut()"
                     class="
                         relative 
@@ -120,26 +120,28 @@
     </div>
 </template>
 
-<script setup>
-import { useUserStore } from '~/stores/user';
+<script setup lang="ts">
+import { navigateTo } from '#app'
+import { useUserStore } from '~/stores/user'
+import { useAuthStore } from '~/stores/auth'
+const user = computed(() => authStore.user)
+
 const userStore = useUserStore()
+const authStore = useAuthStore()
 
-const client = useSupabaseClient()
-const user = useSupabaseUser()
-
-const goTo = (url) => {
-    userStore.isMenuOverlay = false
-    return navigateTo(`/${url}`)
+const goTo = (url: string) => {
+  userStore.isMenuOverlay = false
+  return navigateTo(`/${url}`)
 }
 
 const signOut = () => {
-    client.auth.signOut()
-    userStore.isMenuOverlay = false
-    return navigateTo('/')
+  authStore.logout()
+  userStore.isMenuOverlay = false
+  return navigateTo('/')
 }
 
 const signIn = () => {
-    userStore.isMenuOverlay = false
-    return navigateTo('/auth')
+  userStore.isMenuOverlay = false
+  return navigateTo('/auth')
 }
 </script>
