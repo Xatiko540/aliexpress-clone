@@ -1,0 +1,1 @@
+export { default as SonnerRoot } from './Sonner.vue'

@@ -53,7 +53,14 @@ i18n: {
   lazy: true,
   langDir: 'locales/',
   defaultLocale: 'en',
-  strategy: 'prefix_except_default'
+  strategy: 'prefix_except_default',
+
+experimental: {
+    bundle: {
+      optimizeTranslationDirective: false
+    }
+  },
+
 },
 
   runtimeConfig: {

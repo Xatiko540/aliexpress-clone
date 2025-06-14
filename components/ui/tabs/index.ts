@@ -1,0 +1,6 @@
+export { default as TabsRoot } from './Tabs.vue'
+export { default as UiTabsContent } from './TabsContent.vue'
+export { default as UiTabsList } from './TabsList.vue'
+export { default as UiTabsTrigger } from './TabsTrigger.vue'export { default as TabsContent } from './TabsContent.vue'
+export { default as TabsList } from './TabsList.vue'
+export { default as TabsTrigger } from './TabsTrigger.vue'

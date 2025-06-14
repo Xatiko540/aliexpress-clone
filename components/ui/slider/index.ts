@@ -1,0 +1,1 @@
+export { default as SliderRoot } from './Slider.vue'
