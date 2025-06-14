@@ -54,7 +54,7 @@ const sidebar = [
   'Shoes', 'Halloween', 'Hair wigs', 'Furniture', 'Beauty & Health'
 ]
 
-const activeCategory = ref('Education & Office supplies')
+const activeCategory = ref('Recommend')
 const allItems = ref([])
 
 const filteredItems = computed(() =>
