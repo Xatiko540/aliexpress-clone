@@ -6,7 +6,7 @@
                 <div class="md:w-[65%]">
                     <div class="bg-white rounded-lg p-4">
 
-                        <div class="text-xl font-semibold mb-2">Shipping Address</div>
+                        <div class="text-xl font-semibold mb-2">{{ $t('checkout.shipping') }}</div>
 
                         <div v-if="currentAddress && currentAddress.data">
                             <NuxtLink 
@@ -14,30 +14,30 @@
                                 class="flex items-center pb-2 text-blue-500 hover:text-red-400"
                             >
                                 <Icon name="mdi:plus" size="18" class="mr-2"/>
-                                Update Address
+                                {{ $t('checkout.updateAddress') }}
                             </NuxtLink>
 
                             <div class="pt-2 border-t">
-                                <div class="underline pb-1">Delivery Address</div>
+                                <div class="underline pb-1">{{ $t('checkout.deliveryAddress') }}</div>
                                 <ul class="text-xs">
                                     <li class="flex items-center gap-2">
-                                        <div>Contact name:</div> 
+                                        <div>{{ $t('checkout.contactName') }}</div> 
                                         <div class="font-bold">{{ currentAddress.data.name }}</div>
                                     </li>
                                     <li class="flex items-center gap-2">
-                                        <div>Address:</div> 
+                                        <div>{{ $t('checkout.address') }}</div> 
                                         <div class="font-bold">{{ currentAddress.data.address }}</div>
                                     </li>
                                     <li class="flex items-center gap-2">
-                                        <div>Zip Code:</div> 
+                                        <div>{{ $t('checkout.zip') }}</div> 
                                         <div class="font-bold">{{ currentAddress.data.zipcode }}</div>
                                     </li>
                                     <li class="flex items-center gap-2">
-                                        <div>City:</div> 
+                                        <div>{{ $t('checkout.city') }}</div> 
                                         <div class="font-bold">{{ currentAddress.data.city }}</div>
                                     </li>
                                     <li class="flex items-center gap-2">
-                                        <div>Country:</div> 
+                                        <div>{{ $t('checkout.country') }}</div> 
                                         <div class="font-bold">{{ currentAddress.data.country }}</div>
                                     </li>
                                 </ul>
@@ -50,7 +50,7 @@
                             class="flex items-center text-blue-500 hover:text-red-400"
                         >
                             <Icon name="mdi:plus" size="18" class="mr-2"/>
-                            Add New Address
+                            {{ $t('checkout.addAddress') }}
                         </NuxtLink>
                     </div>
 
@@ -65,17 +65,17 @@
                 <div class="md:w-[35%]">
                     <div id="PlaceOrder" class="bg-white rounded-lg p-4">
 
-                        <div class="text-2xl font-extrabold mb-2">Summary</div>
+                        <div class="text-2xl font-extrabold mb-2">{{ $t('checkout.summary') }}</div>
 
                         <div class="flex items-center justify-between my-4">
-                            <div class="">Total Shipping</div>
-                            <div class="">Free</div>
+                            <div class="">{{ $t('checkout.totalShipping') }}</div>
+                            <div class="">{{ $t('checkout.free') }}</div>
                         </div>
 
                         <div class="border-t" />
 
                         <div class="flex items-center justify-between my-4">
-                            <div class="font-semibold">Total</div>
+                            <div class="font-semibold">{{ $t('checkout.total') }}</div>
                             <div class="text-2xl font-semibold">
                                 $ <span class="font-extrabold">{{ total / 100 }}</span>
                             </div>
@@ -111,14 +111,14 @@
                                 :class="isProcessing ? 'opacity-70' : 'opacity-100'"
                             >
                                 <Icon v-if="isProcessing" name="eos-icons:loading" />
-                                <div v-else>Place order</div>
+                               <div v-else>{{ $t('checkout.placeOrder') }}</div>
                             </button>
                         </form>
 
                     </div>
 
                     <div class="bg-white rounded-lg p-4 mt-4">
-                        <div class="text-lg font-semibold mb-2 mt-2">AliExpress</div>
+                        <div class="text-lg font-semibold mb-2 mt-2">{{ $t('checkout.safePayment') }}</div>
                         <p class="my-2">
                             AliExpress keeps your information and payment safe
                         </p>
@@ -137,6 +137,10 @@ import MainLayout from '~/layouts/MainLayout.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '~/stores/user'
 import { useAuthStore } from '~/stores/auth'
+
+import { useI18n } from 'vue-i18n'
+
+const { t: $t } = useI18n()
 
 const router = useRouter()
 const route = useRoute()

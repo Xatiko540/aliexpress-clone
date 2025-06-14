@@ -4,7 +4,7 @@
       <div class="bg-white w-full p-6 min-h-[150px]">
         <div class="flex items-center text-xl mb-4">
           <Icon name="carbon:delivery" color="#5FCB04" size="35" />
-          <span class="pl-4 font-semibold">Orders</span>
+          <span class="pl-4 font-semibold">{{ $t('orders.title') }}</span>
         </div>
 
         <div 
@@ -14,7 +14,7 @@
           class="text-sm pl-[50px]"
         >
           <div class="border-b py-1">
-            <p>Stripe ID: {{ order.stripeId }}</p>
+            <p>{{ $t('orders.stripeId') }}: {{ order.stripeId }}</p>
 
             <div class="pt-2 space-y-2">
               <div 
@@ -32,14 +32,14 @@
             </div>
 
             <div class="pt-2 pb-5 text-gray-500">
-              Delivery Address: {{ order.name }}, {{ order.address }}, 
+              {{ $t('orders.deliveryAddress') }}: {{ order.name }}, {{ order.address }}, 
               {{ order.zipcode }}, {{ order.city }}, {{ order.country }}
             </div>
           </div>
         </div>
 
         <div v-else class="flex justify-center items-center text-gray-500 py-10">
-          You have no order history
+          {{ $t('orders.empty') }}
         </div>
       </div>
     </div>
@@ -52,6 +52,9 @@ import { useRouter } from 'vue-router'
 import MainLayout from '~/layouts/MainLayout.vue'
 import { useAuthStore } from '~/stores/auth'
 import { useUserStore } from '~/stores/user'
+import { useI18n } from 'vue-i18n'
+
+const { t: $t } = useI18n()
 
 const router = useRouter()
 const authStore = useAuthStore()
