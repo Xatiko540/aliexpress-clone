@@ -133,6 +133,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, onBeforeMount, watchEffect } from 'vue'
+import MainLayout from '~/layouts/MainLayout.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '~/stores/user'
 import { useAuthStore } from '~/stores/auth'

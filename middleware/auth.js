@@ -1,17 +1,12 @@
-import jwt from 'jsonwebtoken'
-
-export default defineNuxtRouteMiddleware((to, from) => {
-  const token = useCookie('auth_token').value
-  const config = useRuntimeConfig()
-
-
-  if (!token && to.path.startsWith('/admin')) {
-    return navigateTo('/auth')
-  }
+export default defineNuxtRouteMiddleware(async (to) => {
+  // 🔐 Проверка: только если заходим на checkout
+  if (!to.path.startsWith('/checkout')) return
 
   try {
-    jwt.verify(token, config.jwtSecret)
-  } catch {
+    // Кука читается сервером внутри /api/user
+    await $fetch('/api/user')
+  } catch (e) {
+    console.error('❌ Middleware: user not authorized', e)
     return navigateTo('/auth')
   }
 })

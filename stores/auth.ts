@@ -1,38 +1,37 @@
-// stores/auth.ts
 import { defineStore } from 'pinia'
 
-import { jwtDecode } from 'jwt-decode'
-
-
-
 interface UserPayload {
-  id: number
+  id: string 
   email: string
-  iat: number
-  exp: number
 }
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: null as null | UserPayload
+    user: null as null | UserPayload,
+    token: null as string | null,
+    isInitialized: false
   }),
   actions: {
     async fetchUser() {
-      const token = useCookie('auth_token').value
-      if (!token) {
-        this.user = null
-        return
-      }
-
       try {
-        this.user = jwtDecode<UserPayload>(token)
-      } catch {
+        const user = await $fetch('/api/user')
+        console.log('✅ [authStore] fetchUser() user:', user)
+
+        this.user = { id: user.id, email: user.email }
+        this.token = user.token ?? null
+      } catch (err) {
+        console.error('❌ Ошибка при получении пользователя:', err)
         this.user = null
+        this.token = null
+      } finally {
+        this.isInitialized = true
       }
     },
     logout() {
-      useCookie('auth_token').value = null
+      document.cookie = 'auth_token=; Max-Age=0; path=/;'
       this.user = null
+      this.token = null
     }
-  }
+  },
+  persist: true
 })

@@ -15,6 +15,7 @@
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.6.5",
     "@types/node": "^18.15.11",
+    "@vitejs/plugin-vue": "^5.2.4",
     "nuxt": "^3.3.3",
     "nuxt-icon": "^0.3.3",
     "ts-node": "^10.9.1",
@@ -22,17 +23,21 @@
     "vue-stripe-js": "^1.0.1"
   },
   "dependencies": {
+    "@nuxt/image": "^1.10.0",
+    "@nuxtjs/i18n": "^9.5.5",
     "@pinia-plugin-persistedstate/nuxt": "^1.1.1",
-    "@pinia/nuxt": "^0.4.8",
+    "@pinia/nuxt": "^0.5.2",
     "@prisma/client": "^4.12.0",
     "@stripe/stripe-js": "^1.52.0",
+    "@vite-pwa/nuxt": "^1.0.4",
     "bcrypt": "^5.1.1",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "nuxt-lodash": "^2.4.1",
     "ofetch": "^1.4.1",
-    "pinia": "^2.0.34",
+    "pinia": "^2.1.4",
     "prisma": "^4.12.0",
-    "stripe": "^12.0.0"
+    "stripe": "^12.0.0",
+    "swiper": "^11.2.8"
   }
 }
