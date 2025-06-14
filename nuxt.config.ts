@@ -1,4 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+
+
+
 export default defineNuxtConfig(<any>{
   pages: true,
 
@@ -42,9 +45,16 @@ export default defineNuxtConfig(<any>{
     }
   },
 
-  i18n: {
-    vueI18n: './i18n/i18n.config.ts'
-  },
+i18n: {
+  locales: [
+    { code: 'ru', file: 'ru.json' },
+    { code: 'en', file: 'en.json' }
+  ],
+  lazy: true,
+  langDir: 'locales/',
+  defaultLocale: 'en',
+  strategy: 'prefix_except_default'
+},
 
   runtimeConfig: {
     jwtSecret: process.env.JWT_SECRET || 'supersecretkey123',

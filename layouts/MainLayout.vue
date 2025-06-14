@@ -20,20 +20,20 @@
                 "
             >
                 <li class="border-r border-r-gray-400 px-3 hover:text-[#FF4646] cursor-pointer">
-                    Sell on AliExpress
+                    <span>{{ $t('layout.sell') }}</span>
                 </li>
                 <li class="border-r border-r-gray-400 px-3 hover:text-[#FF4646] cursor-pointer">
-                    Cookie Preferences
+                    <span>{{ $t('layout.cookies') }}</span>
                 </li>
                 <li class="border-r border-r-gray-400 px-3 hover:text-[#FF4646] cursor-pointer">
-                    Help
+                    <span>{{ $t('layout.help') }}</span>
                 </li>
                 <li class="border-r border-r-gray-400 px-3 hover:text-[#FF4646] cursor-pointer">
-                    Buyer Protection
+                    <span>{{ $t('layout.protection') }}</span>
                 </li>
                 <li class="px-3 hover:text-[#FF4646] cursor-pointer">
                     <Icon name="ic:sharp-install-mobile" size="17"/>
-                    App
+                    <span>{{ $t('layout.app') }}</span>
                 </li>
                 <li 
                     @mouseenter="isAccountMenu = true"
@@ -42,7 +42,7 @@
                     :class="isAccountMenu ? 'bg-white border z-40 shadow-[0_15px_100px_40px_rgba(0,0,0,0.3)]' : 'border border-[#FAFAFA]'"
                 >
                     <Icon name="ph:user-thin" size="17"/>
-                    <span>{{ authStore.user?.email ?? 'Account' }}</span>
+                    <span>{{ authStore.user?.email ?? $t('layout.account') }}</span>
                     <Icon name="mdi:chevron-down" size="15" class="ml-5"/>
 
                     <div 
@@ -51,13 +51,13 @@
                         class="absolute bg-white w-[220px] text-[#333333] z-40 top-[38px] -left-[100px] border-x border-b"
                     >
                     <div v-if="!authStore.user">
-                            <div class="text-semibold text-[15px] my-4 px-3">Welcome to AliExpress!</div>
+                            <div class="text-semibold text-[15px] my-4 px-3">{{ $t('layout.welcome') }}</div>
                             <div class="flex items-center gap-1 px-3 mb-3">
                                 <NuxtLink 
                                     to="/auth"
                                     class="bg-[#FF4646] text-center w-full text-[16px] rounded-sm text-white font-semibold p-2"
                                 >
-                                    Login / Register
+                                    {{ $t('layout.login') }}
                                 </NuxtLink>
                             </div>
                         </div>
@@ -67,14 +67,14 @@
                     @click="navigateTo('/orders')"
                     class="text-[13px] py-2 px-4 w-full hover:bg-gray-200"
                 >
-                    My Orders
+                    {{ $t('layout.orders') }}
                 </li>
                 
                 <li 
                     @click="navigateTo('/settings')"
                     class="text-[13px] py-2 px-4 w-full hover:bg-gray-200"
                 >
-                    Settings
+                    {{ $t('layout.settings') }}
                 </li>
 
                 <li 
@@ -82,7 +82,7 @@
                     @click="logout"
                     class="text-[13px] py-2 px-4 w-full hover:bg-gray-200"
                 >
-                    Sign out
+                    {{ $t('layout.signOut') }}
                 </li>
                 </ul>
                         
@@ -108,14 +108,28 @@
     <!-- Поиск -->
 <!-- Поиск + Категории (Desktop Only) -->
 <div class="flex items-center gap-3 w-full max-w-[850px]">
+
+
   <!-- Categories Button -->
-  <NuxtLink 
-    to="/categories"
-    class="hidden md:flex items-center gap-2 border rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#FF4646] hover:border-[#FF4646] transition"
+<NuxtLink 
+  to="/categories"
+  class="hidden md:flex items-center gap-2 border rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#FF4646] hover:border-[#FF4646] transition"
+>
+  <Icon name="ph:grid-four-light" size="18" />
+  <span>{{ $t('layout.categories') }}</span>
+</NuxtLink>
+
+<!-- ЯЗЫК -->
+<li class="hidden md:flex items-center gap-2 border rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#FF4646] hover:border-[#FF4646] transition cursor-pointer">
+  <Icon name="mdi:translate" size="18" />
+  <select
+    v-model="$i18n.locale"
+    class="bg-transparent outline-none cursor-pointer text-sm"
   >
-    <Icon name="ph:grid-four-light" size="18" />
-    Categories
-  </NuxtLink>
+    <option value="en">🇺🇸 EN</option>
+    <option value="ru">🇷🇺 RU</option>
+  </select>
+</li>
 
   <!-- Search Bar -->
   <div class="relative flex-1">
@@ -191,6 +205,9 @@
       </button>
     </NuxtLink>
   </div>
+
+
+
 
   <!-- 📱 Mobile Layout: Logo + Burger + Search -->
   <div class="block md:hidden w-full">
@@ -285,6 +302,9 @@ import { ref, watch, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '~/stores/auth'
 import { useUserStore } from '~/stores/user'
+import { useI18n } from 'vue-i18n'
+
+const { t: $t, locale } = useI18n()
 
 const authStore = useAuthStore()
 const user = computed(() => authStore.user) 
@@ -298,8 +318,14 @@ const isCartHover = ref(false)
 const isSearching = ref(false)
 const searchItem = ref('')
 
+onMounted(() => {
+  const savedLang = localStorage.getItem('lang')
+  if (savedLang) locale.value = savedLang
+})
 
-
+watch(() => locale.value, (lang) => {
+  localStorage.setItem('lang', lang)
+})
 
 
 

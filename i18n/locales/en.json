@@ -1,0 +1,163 @@
+{
+  "message": "By using this site, you consent to the collection...",
+  "privacy": "Privacy Policy",
+  "agree": "You also accept our",
+  "terms": "Terms of Use",
+  "button": "Got it",
+
+
+  "reviews": {
+    "title": "Reviews",
+    "ask": "Ask a question",
+    "sample": "Good quality, fast delivery."
+  },
+  "filters": {
+    "withPhoto": "With photo",
+    "fromRussia": "From Russia",
+    "allStars": "All stars",
+    "additional": "Additional",
+    "helpfulFirst": "Most helpful first ▼"
+  },
+
+  "product": {
+    "extraDiscount": "Extra 5% off",
+    "welcomeDeal": "Welcome Deal",
+    "topSelling": "Top Selling",
+    "sold": "5,000+ sold",
+    "freeShipping": "Free Shipping"
+  },
+
+
+  "footer": {
+    "help": {
+      "title": "Help",
+      "content": "Help Center, Disputes & Reports, Buyer Protection, Report IPR infringement, Regulated Information"
+    },
+    "languages": {
+      "title": "AliExpress Multi-Language Sites",
+      "content": "Russian, Portuguese, Spanish, French, German, Italian, Dutch, Turkish, Japanese, Korean, Thai, Vietnamese, Arabic, Hebrew, Polish"
+    },
+    "categories": {
+      "title": "Browse by Category",
+      "content": "All Popular, Product, Promotion, Low Price, Great Value, Reviews, Blog, Seller Portal, BLACK FRIDAY, AliExpress Assistant"
+    },
+    "group": {
+      "title": "Alibaba Group",
+      "content": "Alibaba Group Website, AliExpress, Alimama, Alipay, Fliggy, Alibaba Cloud, Alibaba International, AliTelecom, DingTalk, Juhuasuan, Taobao Marketplace, Tmall, Taobao Global, AliOS, 1688"
+    },
+    "subtext": "Intellectual Property Protection - Privacy Policy - Sitemap - Terms of Use - Information for EU consumers - Transaction Services Agreement for non-EU/UK Consumers - Terms and Conditions for EU/EEA/UK Consumers (Transactions) - User Information Legal Enquiry Guide ©️2010-2022 AliExpress.com. All rights reserved."
+  },
+
+  "menu": {
+  "categories": "Categories",
+  "orders": "My Orders",
+  "cart": "Cart",
+  "signOut": "Sign out",
+  "signIn": "Sign in / Register"
+},
+
+
+"layout": {
+  "sell": "Sell on AliExpress",
+  "cookies": "Cookie Preferences",
+  "help": "Help",
+  "protection": "Buyer Protection",
+  "app": "App",
+  "account": "Account",
+  "welcome": "Welcome to AliExpress!",
+  "login": "Login / Register",
+  "orders": "My Orders",
+  "settings": "Settings",
+  "signOut": "Sign out",
+  "categories": "Categories",
+  "relatedProducts": "Related Products",
+  "loading": "Loading..."
+},
+
+
+"categories": {
+  "Recommend": "Recommend",
+  "Women Clothes": "Women Clothes",
+  "Watches": "Watches",
+  "Bags": "Bags",
+  "Men clothes": "Men clothes",
+  "Education & Office supplies": "Education & Office supplies",
+  "Sports & Outdoor": "Sports & Outdoor",
+  "Home appliances": "Home appliances",
+  "Jewelry & Accessories": "Jewelry & Accessories",
+  "Automotive & Motorcycle": "Automotive & Motorcycle",
+  "Toys & Hobbies": "Toys & Hobbies",
+  "Shoes": "Shoes",
+  "Halloween": "Halloween",
+  "Hair wigs": "Hair wigs",
+  "Furniture": "Furniture",
+  "Beauty & Health": "Beauty & Health"
+},
+
+"auth": {
+  "title": "Login / Register",
+  "email": "Email",
+  "password": "Password",
+  "login": "Login",
+  "register": "Register",
+  "toggle": {
+    "login": "No account? Register",
+    "register": "Already have an account? Login"
+  }
+},
+
+"settings": {
+  "title": "Account Settings",
+  "profile": "Profile",
+  "email": "Email",
+  "updateTitle": "Update Password",
+  "newPassword": "New Password",
+  "updateBtn": "Update Password",
+  "dangerTitle": "Danger Zone",
+  "deleteBtn": "Delete My Account"
+},
+
+"cart": {
+  "empty": "No items yet?",
+  "signIn": "Sign in",
+  "title": "Shopping Cart",
+  "welcomeDeal": "Welcome Deal applicable on 1 item only",
+  "summary": "Summary",
+  "total": "Total",
+  "checkout": "Checkout",
+  "paymentMethods": "Payment methods",
+  "protectionTitle": "Buyer Protection",
+  "protectionText": "Get full refund if the item is not as described or if is not delivered"
+},
+
+"orders": {
+  "title": "Orders",
+  "stripeId": "Stripe ID",
+  "deliveryAddress": "Delivery Address",
+  "empty": "You have no order history"
+},
+
+"success": {
+  "title": "Payment Successful",
+  "message": "Thank you! We've received your payment."
+},
+
+"checkout": {
+  "shipping": "Shipping Address",
+  "updateAddress": "Update Address",
+  "addAddress": "Add New Address",
+  "deliveryAddress": "Delivery Address",
+  "contactName": "Contact name:",
+  "address": "Address:",
+  "zip": "Zip Code:",
+  "city": "City:",
+  "country": "Country:",
+  "summary": "Summary",
+  "totalShipping": "Total Shipping",
+  "free": "Free",
+  "total": "Total",
+  "placeOrder": "Place order",
+  "safePayment": "AliExpress keeps your information and payment safe"
+}
+
+}

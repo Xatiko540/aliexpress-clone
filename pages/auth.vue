@@ -9,19 +9,19 @@
     </div>
 
     <div class="max-w-[400px] mx-auto px-2">
-      <div class="text-center my-6 text-lg font-semibold">Login / Register</div>
+      <div class="text-center my-6 text-lg font-semibold">{{ $t('auth.title') }}</div>
 
       <form @submit.prevent="handleSubmit" class="space-y-4">
         <input
           v-model="email"
           type="email"
-          placeholder="Email"
+          :placeholder="$t('auth.email')"
           class="w-full p-2 border rounded"
         />
         <input
           v-model="password"
           type="password"
-          placeholder="Password"
+          :placeholder="$t('auth.password')"
           class="w-full p-2 border rounded"
         />
 
@@ -31,12 +31,12 @@
           type="submit"
           class="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
         >
-          {{ mode === 'login' ? 'Login' : 'Register' }}
+          {{ $t(`auth.${mode}`) }}
         </button>
 
         <p class="text-center text-sm text-gray-600">
           <span @click="toggleMode" class="text-blue-500 cursor-pointer underline">
-            {{ mode === 'login' ? 'Нет аккаунта? Зарегистрируйтесь' : 'Уже есть аккаунт? Войти' }}
+            {{ $t(`auth.toggle.${mode}`) }}
           </span>
         </p>
       </form>
@@ -51,6 +51,9 @@ import { useCookie } from '#app'
 import { $fetch } from 'ofetch'
 import { useAuthStore } from '~/stores/auth'
 import { useUserStore } from '~/stores/user'
+import { useI18n } from 'vue-i18n'
+
+const { t: $t } = useI18n()
 
 const email = ref('')
 const password = ref('')

@@ -1,8 +1,8 @@
 <template>
   <div class="mt-10">
-    <h3 class="text-xl font-semibold mb-4">
-      Похожие товары: <span class="text-[#FF4646]">{{ category }}</span>
-    </h3>
+<h3 class="text-xl font-semibold mb-4">
+  {{ $t('layout.relatedProducts') }}: <span class="text-[#FF4646]">{{ category }}</span>
+</h3>
 
     <Swiper
       :slides-per-view="2"
@@ -36,6 +36,9 @@ import { ref, onMounted } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
 import 'swiper/css/navigation'
+import { useI18n } from 'vue-i18n'
+
+const { t: $t } = useI18n()
 
 import ProductComponent from '~/components/ProductComponent.vue'
 

@@ -11,14 +11,14 @@
             :class="{ 'text-[#FF4646] font-semibold': activeCategory === cat }"
             @click="activeCategory = cat"
           >
-            {{ cat }}
+            {{ $t(`categories.${cat}`) }}
           </li>
         </ul>
       </aside>
 
       <!-- 🖼️ Products Display -->
       <section class="flex-1">
-        <h2 class="text-xl font-bold mb-4">{{ activeCategory }}</h2>
+        <h2 class="text-xl font-bold mb-4">{{ $t(`categories.${activeCategory}`) }}</h2>
 
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           <ProductComponent
@@ -38,6 +38,9 @@ import ProductComponent from '~/components/ProductComponent.vue'
 import { useUserStore } from '~/stores/user'
 import { useAuthStore } from '~/stores/auth'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+
+const { t: $t } = useI18n()
 import { ref, computed, onMounted, watchEffect } from 'vue'
 
 const router = useRouter()
