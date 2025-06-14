@@ -78,8 +78,11 @@
                         <div v-if="isInCart">Is Added</div>
                         <div v-else>Add to Cart</div>
                     </button>
+
                 </div>
             </div>
+<RelatedProducts v-if="product?.data?.category" :category="product.data.category" />
+<ReviewSection />
         </div>
     </MainLayout>
 </template>
@@ -87,6 +90,8 @@
 <script setup>
 import MainLayout from '~/layouts/MainLayout.vue';
 import { useUserStore } from '~/stores/user';
+import RelatedProducts from '~/components/RelatedProducts.vue'
+import ReviewSection from '~/components/ReviewSection.vue'
 const userStore = useUserStore()
 
 const route = useRoute()

@@ -111,6 +111,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, toRaw } from 'vue'
+import MainLayout from '~/layouts/MainLayout.vue'
 import { useUserStore } from '~/stores/user'
 import { useAuthStore } from '~/stores/auth'
 

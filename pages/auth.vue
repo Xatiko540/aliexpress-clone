@@ -45,11 +45,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick} from 'vue'
 import { useRouter } from 'vue-router'
 import { useCookie } from '#app'
 import { $fetch } from 'ofetch'
 import { useAuthStore } from '~/stores/auth'
+import { useUserStore } from '~/stores/user'
 
 const email = ref('')
 const password = ref('')
@@ -57,7 +58,10 @@ const mode = ref<'login' | 'register'>('login')
 const errorMessage = ref('')
 const router = useRouter()
 const authToken = useCookie('auth_token')
+
+
 const authStore = useAuthStore()
+const userStore = useUserStore()
 
 onMounted(() => {
   authStore.fetchUser()
@@ -65,14 +69,16 @@ onMounted(() => {
 
 const handleSubmit = async () => {
   errorMessage.value = ''
+  userStore.isLoading = true
 
   if (!email.value || !password.value) {
     errorMessage.value = 'Введите email и пароль'
+    userStore.isLoading = false
     return
   }
 
   try {
-    const res = await $fetch<{ success: boolean; token?: string; message?: string }>(
+    const res = await $fetch<{ success: boolean; message?: string }>(
       `/api/${mode.value}`,
       {
         method: 'POST',
@@ -80,8 +86,8 @@ const handleSubmit = async () => {
       }
     )
 
-    if (res?.success && res?.token) {
-      authToken.value = res.token
+    if (res?.success) {
+      await nextTick()
       await authStore.fetchUser()
       router.push('/')
     } else {
@@ -89,6 +95,8 @@ const handleSubmit = async () => {
     }
   } catch (err) {
     errorMessage.value = 'Сервер не отвечает. Попробуйте позже.'
+  } finally {
+    userStore.isLoading = false
   }
 }
 

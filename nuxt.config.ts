@@ -1,48 +1,79 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-export default defineNuxtConfig({
-    pages: true,
-  
-    modules: [
-      'nuxt-icon',
-      'nuxt-lodash',
-      '@pinia/nuxt',
-      '@pinia-plugin-persistedstate/nuxt',
-      '@nuxtjs/tailwindcss',
-      
-    ],
-  
-    runtimeConfig: {
-      jwtSecret: process.env.JWT_SECRET || 'supersecretkey123',
-      public: {
-        stripePk: process.env.STRIPE_PK_KEY || '',
-      },
-    },
-  
-    app: {
-      head: {
-        script: [
-          { src: 'https://js.stripe.com/v3/', defer: true },
-        ],
-        meta: [
-          { name: 'referrer', content: 'no-referrer-when-downgrade' }, // ⚔️ fixes `opaque response blocking`
-        ],
-      },
-    },
-  
-    // server: {
-    //   port: 3000,
-    //   host: '0.0.0.0',
-    // },
-  
-    nitro: {
-      preset: 'node-server',
-      routeRules: {
-        '/**': { cors: true }, // ✅ enable CORS for all routes
-      },
+export default defineNuxtConfig(<any>{
+  pages: true,
 
-      externals: {
-        inline: ['jsonwebtoken']
-      }
-      
+  modules: [
+    'nuxt-icon',
+    'nuxt-lodash',
+    '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
+    '@nuxtjs/tailwindcss',
+    '@nuxtjs/i18n',
+    '@nuxt/image',
+    '@vite-pwa/nuxt'
+  ],
+
+  // 👇 PWA конфигурация
+  pwa: {
+    registerType: 'autoUpdate',
+        workbox: {
+      navigateFallback: '/', // ✅ вот сюда добавь
+      globPatterns: ['**/*.{js,css,html,ico,png,svg}']
     },
-  })
+    manifest: {
+      name: 'AliExpress',
+      short_name: 'AliApp',
+      start_url: '/',
+      display: 'standalone',
+      background_color: '#ffffff',
+      theme_color: '#FF4646',
+      icons: [
+        {
+          src: '/AliExpress-logo.png',
+          sizes: '192x192',
+          type: 'image/png',
+        },
+        {
+          src: '/AliExpress-logo.png',
+          sizes: '512x512',
+          type: 'image/png',
+        },
+      ]
+    }
+  },
+
+  i18n: {
+    vueI18n: './i18n/i18n.config.ts'
+  },
+
+  runtimeConfig: {
+    jwtSecret: process.env.JWT_SECRET || 'supersecretkey123',
+    public: {
+      stripePk: process.env.STRIPE_PK_KEY || '',
+    },
+  },
+
+app: {
+  head: {
+    link: [
+      { rel: 'manifest', href: '/manifest.webmanifest' }
+    ],
+    script: [
+      { src: 'https://js.stripe.com/v3/', defer: true },
+    ],
+    meta: [
+      { name: 'referrer', content: 'no-referrer-when-downgrade' },
+    ],
+  },
+},
+
+  nitro: {
+    preset: 'node-server',
+    routeRules: {
+      '/**': { cors: true },
+    },
+    externals: {
+      inline: ['jsonwebtoken']
+    }
+  }
+})
