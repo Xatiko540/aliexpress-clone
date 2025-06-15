@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { useAuth } from "~/composables/useAuth";
-import { useRoute } from "vue-router";
+import { useRoute } from '#imports'
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '~/stores/auth'
+
 import {
   Users,
   FileText,
@@ -8,21 +10,32 @@ import {
   ChevronLeft,
   ChevronRight,
   LayoutDashboard,
-  LineChart,
-} from "lucide-vue-next";
-import type { User } from "~/types/data";
+  LineChart
+} from 'lucide-vue-next'
 
-const route = useRoute();
-const { user, logout, isAdmin } = useAuth();
-const isCollapsed = ref(false);
+// 🧠 Путь текущий
+const route = useRoute()
 
+// 🧱 Состояние authStore
+const auth = useAuthStore()
+const { user } = storeToRefs(auth)
+const { logout } = auth
+
+const isCollapsed = ref(false)
 const toggleCollapse = () => {
-  isCollapsed.value = !isCollapsed.value;
-};
+  isCollapsed.value = !isCollapsed.value
+}
 
-const userLinks = [{ to: "/admin/users", label: "All Users", icon: Users }];
+// 💡 Временная проверка isAdmin через email
+const isAdmin = computed(() => user.value?.email === 'admin@example.com')
 
-const postLinks = [{ to: "/admin/posts", label: "All Posts", icon: FileText }];
+const userLinks = [
+  { to: '/admin/users', label: 'All Users', icon: Users }
+]
+
+const postLinks = [
+  { to: '/admin/posts', label: 'All Posts', icon: FileText }
+]
 </script>
 
 <template>

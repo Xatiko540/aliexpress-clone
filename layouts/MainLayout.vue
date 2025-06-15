@@ -320,7 +320,9 @@ const searchItem = ref('')
 
 onMounted(() => {
   const savedLang = localStorage.getItem('lang')
-  if (savedLang) locale.value = savedLang
+  if (savedLang === 'ru' || savedLang === 'en') {
+    locale.value = savedLang
+  }
 })
 
 watch(() => locale.value, (lang) => {
@@ -351,6 +353,13 @@ watch(() => searchItem.value, async () => {
 
 // 🔥 Чистый logout
 const logout = async () => {
+
+  // Удалить куку
+  document.cookie = 'auth_token=; Max-Age=0; path=/;'
+
+  // Дополнительно удалить из localStorage, если persist использует его
+  localStorage.removeItem('auth')
+  
   useCookie('auth_token').value = null
   authStore.logout()
   router.push('/')
