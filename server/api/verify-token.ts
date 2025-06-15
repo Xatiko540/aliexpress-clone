@@ -1,5 +1,6 @@
 // server/api/verify-token.post.ts
 
+// @ts-ignore
 import jwt from 'jsonwebtoken'
 import { readBody } from 'h3'
 

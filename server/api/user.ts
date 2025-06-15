@@ -1,6 +1,7 @@
 // server/api/user.ts
 import { getCookie, send } from 'h3'
 import { PrismaClient } from '@prisma/client'
+// @ts-ignore
 import jwt from 'jsonwebtoken'
 
 const prisma = new PrismaClient()
