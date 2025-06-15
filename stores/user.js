@@ -24,10 +24,14 @@ export const useUserStore = defineStore('user', {
   actions: {
     async fetchUser() {
       try {
-        const response = await $fetch('/api/user') // ☑️ Кука читается на сервере
-        this.user = response
+      const resp = await $fetch('/api/user', { credentials: 'include' });
+      if (!resp) {
+        this.user = null;
+      } else {
+        this.user = { ...resp };
+      }
       } catch (error) {
-        console.error('Ошибка при получении пользователя:', error)
+        // console.error('Ошибка при получении пользователя:', error)
         this.user = null
       }
     }

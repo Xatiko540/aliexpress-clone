@@ -1,17 +1,31 @@
 // server/api/user.ts
-import { getCookie } from 'h3'
+import { getCookie, send } from 'h3'
 import { PrismaClient } from '@prisma/client'
 import jwt from 'jsonwebtoken'
 
 const prisma = new PrismaClient()
 
 export default defineEventHandler(async (event) => {
+
+
+  
   const token = getCookie(event, 'auth_token')
+
+  if (!token) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' });
+
+  if (!token) return null;
+
+  const config = useRuntimeConfig()
+
+  // ⛔️ Неавторизованный — на клиенте просто null, на сервере — ошибка
   if (!token) {
+    if (event.node.req.headers.accept?.includes('text/html')) {
+      // для браузера (HTML), считаем как гость
+      return null
+    }
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
   }
 
-  const config = useRuntimeConfig()
   let payload: { id: string }
 
   try {
@@ -21,13 +35,14 @@ export default defineEventHandler(async (event) => {
     }
     payload = decoded as { id: string }
   } catch (err) {
+    if (event.node.req.headers.accept?.includes('text/html')) {
+      return null
+    }
     throw createError({ statusCode: 401, statusMessage: 'Invalid Token' })
   }
 
   const user = await prisma.user.findUnique({
-    where: {
-      id: payload.id,
-    },
+    where: { id: payload.id },
   })
 
   if (!user) {
@@ -37,6 +52,8 @@ export default defineEventHandler(async (event) => {
   return {
     id: user.id,
     email: user.email,
+    username: user.username || '',
+    avatar: user.avatar || '',
     token,
   }
 })

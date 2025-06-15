@@ -94,7 +94,9 @@ const authStore = useAuthStore()
 
 onMounted(() => {
   const savedLang = localStorage.getItem('lang')
-  if (savedLang) locale.value = savedLang
+  if (savedLang === 'ru' || savedLang === 'en') {
+    locale.value = savedLang
+  }
 })
 
 watch(() => locale.value, (lang) => {
