@@ -1,6 +1,7 @@
 // server/api/auth.ts
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcrypt'
+// @ts-ignore
 import jwt from 'jsonwebtoken'
 
 const prisma = new PrismaClient()

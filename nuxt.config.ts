@@ -9,12 +9,13 @@ export default defineNuxtConfig(<any>{
     'nuxt-icon',
     'nuxt-lodash',
     '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt',
     '@nuxtjs/tailwindcss',
     '@nuxtjs/i18n',
     '@nuxt/image',
     '@vite-pwa/nuxt'
   ],
+
+  plugins: ['~/plugins/piniaPersist.client.ts'], 
 
   // 👇 PWA конфигурация
   pwa: {
@@ -63,12 +64,14 @@ experimental: {
 
 },
 
-  runtimeConfig: {
-    jwtSecret: process.env.JWT_SECRET || 'supersecretkey123',
-    public: {
-      stripePk: process.env.STRIPE_PK_KEY || '',
-    },
+runtimeConfig: {
+  jwtSecret: process.env.JWT_SECRET || 'supersecretkey123',
+  smtpUser: process.env.SMTP_USER,
+  smtpPass: process.env.SMTP_PASS,
+  public: {
+    stripePk: process.env.STRIPE_PK_KEY || '',
   },
+},
 
 app: {
   head: {
