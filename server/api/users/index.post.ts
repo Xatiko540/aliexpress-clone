@@ -12,7 +12,7 @@ const createUserSchema = z.object({
     .regex(/^[a-zA-Z0-9_]+$/),
   email: z.string().email().max(255),
   password: z.string().min(6).max(32),
-  role: z.enum(["ADMIN", "USER"]),
+    role: z.enum(["ADMIN", "USER", "admin", "user"]).transform((val) => val.toUpperCase() as "ADMIN" | "USER"),
 });
 
 export default defineEventHandler(async (event) => {

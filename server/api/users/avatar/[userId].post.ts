@@ -6,17 +6,26 @@ const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
   try {
-    const formData = await readMultipartFormData(event);
-    const userId = event.context.params?.userId;
+    const userId = getRouterParam(event, "userId");
 
-    if (!formData || formData.length === 0) {
+    if (!userId) {
+      throw createError({
+        statusCode: 400,
+        message: "User ID is required",
+      });
+    }
+
+    const body = await readMultipartFormData(event);
+
+    if (!body || body.length === 0) {
       throw createError({
         statusCode: 400,
         message: "No avatar file uploaded",
       });
     }
 
-    const avatarFile = formData[0];
+    const avatarFile = body[0];
+
     if (!avatarFile.filename) {
       throw createError({
         statusCode: 400,
@@ -24,7 +33,6 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    // Validate file type
     const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
     if (!allowedTypes.includes(avatarFile.type || "")) {
       throw createError({
@@ -33,13 +41,11 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    // Create uploads directory if it doesn't exist
     const uploadDir = path.join(process.cwd(), "public", "uploads", "avatars");
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
 
-    // Generate unique filename
     const filename = `${Date.now()}-${avatarFile.filename}`;
     const filepath = path.join(uploadDir, filename);
     const avatarPath = `/uploads/avatars/${filename}`;
@@ -47,8 +53,14 @@ export default defineEventHandler(async (event) => {
     // Save file
     fs.writeFileSync(filepath, avatarFile.data);
 
-    // Update user avatar in database
-    const user = await prisma.user.update({
+    // Get existing avatar path first
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { avatar: true },
+    });
+
+    // Update avatar in DB
+    const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: { avatar: avatarPath },
       select: {
@@ -59,9 +71,17 @@ export default defineEventHandler(async (event) => {
       },
     });
 
+    // Delete old avatar if present
+    if (existingUser?.avatar && existingUser.avatar !== avatarPath) {
+      const oldPath = path.join(process.cwd(), "public", existingUser.avatar);
+      if (fs.existsSync(oldPath)) {
+        fs.unlinkSync(oldPath);
+      }
+    }
+
     return {
       success: true,
-      user,
+      user: updatedUser,
     };
   } catch (error: any) {
     console.error("Avatar upload error:", error);
