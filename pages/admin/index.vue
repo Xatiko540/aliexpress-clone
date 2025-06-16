@@ -43,7 +43,7 @@
         <!-- 👥 Центр пользователей -->
         <div>
           <p class="text-gray-500 font-medium mt-4 mb-1">👥 Центр пользователей</p>
-          <NuxtLink to="/admin" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Список участников</NuxtLink>
+          <NuxtLink to="/admin/users" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Список участников</NuxtLink>
           <NuxtLink to="/admin/levels" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Уровни участников</NuxtLink>
         </div>
       </nav>
@@ -88,7 +88,7 @@
                 <td class="px-3 py-2">{{ product.title }}</td>
                 <td class="px-3 py-2">{{ product.price / 100 }} ₽</td>
                 <td class="px-3 py-2 space-x-1">
-                  <button class="text-xs px-2 py-1 rounded bg-blue-100 text-blue-800">Редактировать</button>
+                 <NuxtLink :to="`/admin/products/${product.id}`">Редактировать</NuxtLink>
                   <button class="text-xs px-2 py-1 rounded bg-red-100 text-red-800">Удалить</button>
                 </td>
               </tr>
