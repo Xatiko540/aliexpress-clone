@@ -1,8 +1,16 @@
 <template>
   <div class="flex min-h-screen bg-gray-100">
     <!-- Sidebar -->
-    <aside class="w-72 bg-white shadow-md h-screen sticky top-0 overflow-y-auto">
-      <div class="p-4 text-xl font-bold border-b">Админ Панель</div>
+    <aside
+      :class="['bg-white shadow-md h-screen top-0 overflow-y-auto z-50 lg:sticky transition-transform duration-300 ease-in-out', isSidebarOpen ? 'fixed left-0 w-64' : 'fixed -translate-x-full w-64', 'lg:translate-x-0 lg:w-72']"
+      @click.self="closeSidebar"
+    >
+      <div class="p-4 text-xl font-bold border-b flex justify-between items-center">
+        <span>Админ Панель</span>
+        <button @click="closeSidebar" class="lg:hidden">
+          <Icon name="ph:x" size="20" />
+        </button>
+      </div>
       <nav class="p-4 space-y-4 text-sm">
         <!-- 📦 Центр товаров -->
         <div>
@@ -36,7 +44,10 @@
     <div class="flex-1 flex flex-col min-h-screen">
       <!-- Header / App Bar -->
       <header class="bg-white border-b shadow-sm p-4 flex justify-between items-center">
-        <h1 class="text-lg font-semibold">Админ Панель</h1>
+        <button @click="toggleSidebar" class="lg:hidden p-2 rounded-full hover:bg-gray-200">
+          <Icon name="mdi:menu" size="24" />
+        </button>
+        <h1 class="text-lg font-semibold hidden lg:block">Админ Панель</h1>
         <div class="space-x-2">
           <button class="p-2 rounded-full hover:bg-gray-200">
             <Icon name="ph:gear" size="20" />
@@ -54,3 +65,9 @@
     </div>
   </div>
 </template>
+
+<script setup>
+const isSidebarOpen = ref(false)
+const toggleSidebar = () => { isSidebarOpen.value = !isSidebarOpen.value }
+const closeSidebar = () => { isSidebarOpen.value = false }
+</script>
