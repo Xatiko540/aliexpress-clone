@@ -12,31 +12,77 @@
         </button>
       </div>
       <nav class="p-4 space-y-4 text-sm">
+
+
+        <!-- 🏠 Dashboard -->
+        <div>
+          <p class="text-gray-500 font-medium mb-1">🏠 Главное</p>
+          <NuxtLink to="/admin" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Дашборд</NuxtLink>
+        </div>
+
+
         <!-- 📦 Центр товаров -->
         <div>
           <p class="text-gray-500 font-medium mb-1">📦 Центр товаров</p>
           <NuxtLink to="/admin/products" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Управление товарами</NuxtLink>
-          <NuxtLink to="/admin/products/create" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Добавление товара</NuxtLink>
-          <NuxtLink to="/admin/products/categories" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Категория товара</NuxtLink>
-          <NuxtLink to="/admin/products/reviews" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Отзывы о товаре</NuxtLink>
+          <NuxtLink to="/admin/create" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Добавление товара</NuxtLink>
+          <NuxtLink to="/admin/categories" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Категория товара</NuxtLink>
+          <NuxtLink to="/admin/reviews" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Отзывы о товаре</NuxtLink>
         </div>
 
         <!-- 💱 Центр транзакций -->
         <div>
           <p class="text-gray-500 font-medium mt-4 mb-1">💱 Центр транзакций</p>
           <NuxtLink to="/admin/orders" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Список заказов</NuxtLink>
-          <NuxtLink to="/admin/orders/reports" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Отчёты заказов</NuxtLink>
-          <NuxtLink to="/admin/returns/history" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">История возвратов</NuxtLink>
-          <NuxtLink to="/admin/orders/reviews" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Отзывы о заказах</NuxtLink>
-          <NuxtLink to="/admin/orders/manual" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Добавить заказ вручную</NuxtLink>
+          <NuxtLink to="/admin/reports" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Отчёты заказов</NuxtLink>
+          <NuxtLink to="/admin/history" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">История возвратов</NuxtLink>
+          <NuxtLink to="/admin/reviews" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Отзывы о заказах</NuxtLink>
+          <NuxtLink to="/admin/manual" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Добавить заказ вручную</NuxtLink>
         </div>
 
-        <!-- 👥 Центр пользователей -->
+        <!--  Центр пользователей -->
         <div>
           <p class="text-gray-500 font-medium mt-4 mb-1">👥 Центр пользователей</p>
           <NuxtLink to="/admin/users/" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Список участников</NuxtLink>
           <NuxtLink to="/admin/levels" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Уровни участников</NuxtLink>
         </div>
+
+
+        <!--  Финансовые операции-->
+        <div>
+          <p class="text-gray-500 font-medium mt-4 mb-1">💳 Финансовые операции</p>
+          <NuxtLink to="/admin/withdrawals" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Запросы на вывод</NuxtLink>
+          <NuxtLink to="/admin/transactions" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">История транзакций</NuxtLink>
+          <NuxtLink to="/admin/bonuses" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Начисление бонусов</NuxtLink>
+        </div>
+
+
+
+              <!-- Статистика и отчёты-->
+        <div>
+          <p class="text-gray-500 font-medium mt-4 mb-1">📊 Статистика и отчёты</p>
+          <NuxtLink to="/admin/stats" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Общая статистика</NuxtLink>
+          <NuxtLink to="/admin/sales-report" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Отчёт по продажам</NuxtLink>
+        </div>
+
+
+             <!-- Обратный выкуп / переработка-->
+        <div>
+          <p class="text-gray-500 font-medium mt-4 mb-1">🔁 Переработка / выкуп</p>
+          <NuxtLink to="/admin/buybacks" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Выкупы клиентов</NuxtLink>
+          <NuxtLink to="/admin/buybacks/manual" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Ручная переработка</NuxtLink>
+        </div>
+
+
+                  <!-- Рефералы и менеджеры-->
+        <div>
+            <p class="text-gray-500 font-medium mt-4 mb-1">🔗 Реферальная система</p>
+            <NuxtLink to="/admin/referrals" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Ссылки и активность</NuxtLink>
+            <NuxtLink to="/admin/clients" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Клиенты менеджеров</NuxtLink>
+        </div>
+
+
+
       </nav>
     </aside>
 
