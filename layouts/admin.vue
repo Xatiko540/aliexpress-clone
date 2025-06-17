@@ -70,7 +70,7 @@
         <div>
           <p class="text-gray-500 font-medium mt-4 mb-1">🔁 Переработка / выкуп</p>
           <NuxtLink to="/admin/buybacks" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Выкупы клиентов</NuxtLink>
-          <NuxtLink to="/admin/buybacks/manual" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Ручная переработка</NuxtLink>
+          <NuxtLink to="/admin/manualbuybacks" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Ручная переработка</NuxtLink>
         </div>
 
 
