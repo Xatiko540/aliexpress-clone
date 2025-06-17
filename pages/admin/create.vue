@@ -25,6 +25,7 @@ const submit = async () => {
 </script>
 
 <template>
+      <AdminLayout>
   <div class="p-6 bg-gray-100 min-h-screen">
     <div class="bg-white p-6 shadow rounded max-w-xl mx-auto">
       <h1 class="text-2xl font-bold mb-4">Добавить товар</h1>
@@ -43,4 +44,5 @@ const submit = async () => {
       </form>
     </div>
   </div>
+  </AdminLayout>
 </template>
