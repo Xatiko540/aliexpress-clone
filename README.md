@@ -91,15 +91,27 @@ If you'd like a step by step guide on how to build this just **CLICK THE IMAGE B
 ## App Setup (localhost)
 
 ```
-git clone https://github.com/John-Weeks-Dev/AliExpress-clone.git
+git clone https://github.com/Xatiko540/aliexpress-clone/
 
-cp .env.example .env
+cp .env.env
 
 npm i
 
+npm install
+
+npm install --legacy-peer-deps
+
 npx prisma generate
 
-npm run dev
+pm2 start ecosystem.config.js
+
+npm run build
+
+pm2 status
+
+pm2 restart aliwebb --update-env
+
+npx prisma studio --hostname=0.0.0.0 --port=5558
 ```
 
 You'll have to setup a Supabase account & Stripe account, then add all of the details in to your .env file.
