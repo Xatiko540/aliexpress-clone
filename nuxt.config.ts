@@ -15,7 +15,13 @@ export default defineNuxtConfig(<any>{
     '@vite-pwa/nuxt'
   ],
 
-  plugins: ['~/plugins/piniaPersist.client.ts'], 
+  
+
+
+  plugins: [
+    '~/plugins/piniaPersist.client.ts',
+    '~/plugins/apexcharts.client.ts' 
+  ],
 
   // 👇 PWA конфигурация
   pwa: {
@@ -64,6 +70,7 @@ experimental: {
 
 },
 
+
 runtimeConfig: {
   jwtSecret: process.env.JWT_SECRET || 'supersecretkey123',
   smtpUser: process.env.SMTP_USER,
@@ -95,5 +102,8 @@ app: {
     externals: {
       inline: ['jsonwebtoken']
     }
-  }
+  },
+
+
+
 })

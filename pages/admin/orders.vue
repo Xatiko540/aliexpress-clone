@@ -1,4 +1,5 @@
 <template>
+    <AdminLayout>
   <div class="min-h-screen bg-gray-100 p-4">
     <div class="bg-white shadow rounded-lg p-6">
       <h2 class="text-2xl font-bold mb-4">Список заказов</h2>
@@ -36,9 +37,11 @@
       </div>
     </div>
   </div>
+  </AdminLayout>
 </template>
 
 <script setup>
+import AdminLayout from "@/layouts/admin.vue";
 const orders = ref([])
 
 onMounted(async () => {

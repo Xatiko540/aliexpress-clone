@@ -31,10 +31,13 @@
                 <li class="border-r border-r-gray-400 px-3 hover:text-[#FF4646] cursor-pointer">
                     <span>{{ $t('layout.protection') }}</span>
                 </li>
-                <li class="px-3 hover:text-[#FF4646] cursor-pointer">
-                    <Icon name="ic:sharp-install-mobile" size="17"/>
+                  <li
+                    class="px-3 hover:text-[#FF4646] cursor-pointer"
+                    @click="installApp"
+                  >
+                    <Icon name="ic:sharp-install-mobile" size="17" />
                     <span>{{ $t('layout.app') }}</span>
-                </li>
+                 </li>
                 <li 
                     @mouseenter="isAccountMenu = true"
                     @mouseleave="isAccountMenu = false"
@@ -318,12 +321,36 @@ const isCartHover = ref(false)
 const isSearching = ref(false)
 const searchItem = ref('')
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>
+  userChoice: Promise<{
+    outcome: 'accepted' | 'dismissed'
+    platform: string
+  }>
+}
+
+let installPrompt = ref<BeforeInstallPromptEvent | null>(null)
+
+
 onMounted(() => {
   const savedLang = localStorage.getItem('lang')
   if (savedLang === 'ru' || savedLang === 'en') {
     locale.value = savedLang
   }
+
+  window.addEventListener('beforeinstallprompt', (e: Event) => {
+    e.preventDefault()
+    installPrompt.value = e as BeforeInstallPromptEvent
+  })
+
 })
+
+const installApp = async () => {
+  if (!installPrompt.value) return
+  installPrompt.value.prompt()
+  const result = await installPrompt.value.userChoice
+  installPrompt.value = null
+}
 
 watch(() => locale.value, (lang) => {
   localStorage.setItem('lang', lang)
