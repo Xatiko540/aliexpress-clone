@@ -1,4 +1,4 @@
-# AliExpress Clone / (aliexpress-clone)
+# AliExpress  E-commerce / (aliexpress- E-commerce)
 
 ### Learn how to build this!
 
@@ -111,7 +111,7 @@ If you'd like a step by step guide on how to build this just **CLICK THE IMAGE B
 ## App Setup (localhost)
 
 ```
-git clone https://github.com/Xatiko540/aliexpress-clone/
+git clone https://github.com/Xatiko540/aliexpress--E-commerce
 
 cp .env.env
 
