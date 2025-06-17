@@ -1,5 +1,5 @@
 <script setup>
-definePageMeta({ layout: 'admin' })
+import AdminLayout from "@/layouts/admin.vue";
 
 const title = ref('')
 const description = ref('')

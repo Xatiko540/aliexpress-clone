@@ -68,9 +68,6 @@ import AdminLayout from '@/layouts/admin.vue'
 const { toast } = useToast();
 const router = useRouter();
 
-definePageMeta({
-  layout: 'admin'
-})
 
 type User = {
   id: string;
