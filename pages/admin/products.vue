@@ -1,4 +1,5 @@
 <template>
+  <AdminLayout>
   <div class="flex min-h-screen bg-gray-100 relative">
     <!-- Мобильное затемнение -->
     <div
@@ -7,48 +8,7 @@
       @click="toggleSidebar"
     ></div>
 
-    <!-- Sidebar -->
-    <aside
-      :class="{
-        'fixed left-0 top-0 w-72 bg-white shadow-md h-full overflow-y-auto z-50 transform transition-transform duration-300 will-change-transform': true,
-        'translate-x-0': isSidebarOpen,
-        '-translate-x-full': !isSidebarOpen,
-        'lg:relative lg:translate-x-0 lg:sticky lg:top-0': true
-      }"
-    >
-      <div class="p-4 text-xl font-bold border-b flex justify-between items-center">
-        <span>Админ Панель</span>
-        <button @click="toggleSidebar" class="lg:hidden p-2 rounded-full hover:bg-gray-200">
-          <Icon name="mdi:close" size="20" />
-        </button>
-      </div>
-      <nav class="p-4 space-y-4 text-sm">
-        <!-- 📦 Центр товаров -->
-        <div>
-          <p class="text-gray-500 font-medium mb-1">📦 Центр товаров</p>
-          <NuxtLink to="/admin/products" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Управление товарами</NuxtLink>
-          <NuxtLink to="/admin/create" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Добавление товара</NuxtLink>
-          <NuxtLink to="/admin/products/categories" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Категория товара</NuxtLink>
-          <NuxtLink to="/admin/products/reviews" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Отзывы о товаре</NuxtLink>
-        </div>
-        <!-- 💱 Центр транзакций -->
-        <div>
-          <p class="text-gray-500 font-medium mt-4 mb-1">💱 Центр транзакций</p>
-          <NuxtLink to="/admin/orders" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Список заказов</NuxtLink>
-          <NuxtLink to="/admin/orders/reports" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Отчёты заказов</NuxtLink>
-          <NuxtLink to="/admin/returns/history" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">История возвратов</NuxtLink>
-          <NuxtLink to="/admin/orders/reviews" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Отзывы о заказах</NuxtLink>
-          <NuxtLink to="/admin/orders/manual" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Добавить заказ вручную</NuxtLink>
-        </div>
-        <!-- 👥 Центр пользователей -->
-        <div>
-          <p class="text-gray-500 font-medium mt-4 mb-1">👥 Центр пользователей</p>
-          <NuxtLink to="/admin" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Список участников</NuxtLink>
-          <NuxtLink to="/admin/levels" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Уровни участников</NuxtLink>
-        </div>
-      </nav>
-    </aside>
-
+  
     <!-- Main Content Area -->
     <div class="flex-1 flex flex-col">
       <!-- App Bar -->
@@ -98,9 +58,11 @@
       </main>
     </div>
   </div>
+  </AdminLayout>
 </template>
 
 <script setup>
+import AdminLayout from "@/layouts/admin.vue";
 const products = ref([])
 const searchQuery = ref('')
 const isSidebarOpen = ref(false) // Состояние для управления видимостью боковой панели
