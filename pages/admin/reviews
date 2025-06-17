@@ -1,0 +1,61 @@
+// pages/admin/reviews.vue
+<template>
+  <AdminLayout>
+    <div class="p-4">
+      <h1 class="text-2xl font-bold mb-6">Отзывы о товарах</h1>
+
+      <div class="mb-4 flex flex-wrap gap-4">
+        <input v-model="searchQuery" type="text" placeholder="Поиск по названию товара..." class="border p-2 rounded w-full max-w-xs" />
+        <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Поиск</button>
+      </div>
+
+      <div class="bg-white shadow rounded p-4 overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-100 text-xs text-left uppercase">
+            <tr>
+              <th class="px-4 py-2">ID</th>
+              <th class="px-4 py-2">Товар</th>
+              <th class="px-4 py-2">Пользователь</th>
+              <th class="px-4 py-2">Оценка</th>
+              <th class="px-4 py-2">Комментарий</th>
+              <th class="px-4 py-2">Дата</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="review in mockReviews" :key="review.id" class="border-b">
+              <td class="px-4 py-2">{{ review.id }}</td>
+              <td class="px-4 py-2">{{ review.product }}</td>
+              <td class="px-4 py-2">{{ review.user }}</td>
+              <td class="px-4 py-2">{{ review.rating }} ⭐</td>
+              <td class="px-4 py-2 max-w-xs truncate">{{ review.comment }}</td>
+              <td class="px-4 py-2 text-sm text-gray-500">{{ review.date }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </AdminLayout>
+</template>
+
+<script setup>
+const searchQuery = ref('')
+
+const mockReviews = ref([
+  {
+    id: 1,
+    product: 'Смартфон Xiaomi Redmi 12',
+    user: 'ivan@example.com',
+    rating: 5,
+    comment: 'Отличный товар, быстро доставили!',
+    date: '2024-06-10'
+  },
+  {
+    id: 2,
+    product: 'Наушники JBL T110',
+    user: 'anna@test.ru',
+    rating: 4,
+    comment: 'Хороший звук, но не подошли по размеру',
+    date: '2024-06-08'
+  }
+])
+</script>
