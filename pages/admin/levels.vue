@@ -33,6 +33,7 @@
 </template>
 
 <script setup>
+import AdminLayout from '@/layouts/admin.vue'
 const levels = ref([
   { id: 1, name: 'Новичок', minReputation: 0, description: 'Базовый уровень пользователя' },
   { id: 2, name: 'Проверенный', minReputation: 100, description: 'Пользователь с хорошей репутацией' },
