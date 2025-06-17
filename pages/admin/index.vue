@@ -1,4 +1,5 @@
 <template>
+  <AdminLayout>
   <div class="flex min-h-screen bg-gray-100 relative">
     <!-- Мобильное затемнениеб -->
     <div
@@ -98,9 +99,11 @@
       </main>
     </div>
   </div>
+  </AdminLayout>
 </template>
 
 <script setup>
+import AdminLayout from "@/layouts/admin.vue";
 const products = ref([])
 const searchQuery = ref('')
 const isSidebarOpen = ref(false) // Состояние для управления видимостью боковой панели
