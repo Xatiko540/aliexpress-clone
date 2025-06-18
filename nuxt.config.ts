@@ -12,7 +12,10 @@ export default defineNuxtConfig(<any>{
     '@nuxtjs/tailwindcss',
     '@nuxtjs/i18n',
     '@nuxt/image',
-    '@vite-pwa/nuxt'
+    '@nuxt-modules/compression',
+    '@vite-pwa/nuxt',
+    '@formkit/auto-animate',
+  
   ],
 
   
@@ -96,6 +99,7 @@ app: {
 },
 
   nitro: {
+    compressPublicAssets: true,
     preset: 'node-server',
     routeRules: {
       '/**': { cors: true },
