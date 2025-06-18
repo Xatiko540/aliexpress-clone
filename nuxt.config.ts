@@ -27,8 +27,8 @@ export default defineNuxtConfig(<any>{
   pwa: {
     registerType: 'autoUpdate',
         workbox: {
-      navigateFallback: '/', // ✅ вот сюда добавь
-      globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+    navigateFallback: '/',
+    globPatterns: ['**/*.{js,css,html,png,svg,json,ico,webmanifest}'],
     },
     manifest: {
       name: 'AliExpress',
@@ -92,6 +92,7 @@ app: {
       { name: 'referrer', content: 'no-referrer-when-downgrade' },
     ],
   },
+  
 },
 
   nitro: {
