@@ -11,78 +11,22 @@
           <Icon name="ph:x" size="20" />
         </button>
       </div>
-      <nav class="p-4 space-y-4 text-sm">
-
-
-        <!-- 🏠 Dashboard -->
-        <div>
-          <p class="text-gray-500 font-medium mb-1">🏠 Главное</p>
-          <NuxtLink to="/admin" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Дашборд</NuxtLink>
-        </div>
-
-
-        <!-- 📦 Центр товаров -->
-        <div>
-          <p class="text-gray-500 font-medium mb-1">📦 Центр товаров</p>
-          <NuxtLink to="/admin/products" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Управление товарами</NuxtLink>
-          <NuxtLink to="/admin/create" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Добавление товара</NuxtLink>
-          <NuxtLink to="/admin/categories" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Категория товара</NuxtLink>
-          <NuxtLink to="/admin/reviews" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Отзывы о товаре</NuxtLink>
-        </div>
-
-        <!-- 💱 Центр транзакций -->
-        <div>
-          <p class="text-gray-500 font-medium mt-4 mb-1">💱 Центр транзакций</p>
-          <NuxtLink to="/admin/orders" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Список заказов</NuxtLink>
-          <NuxtLink to="/admin/reports" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Отчёты заказов</NuxtLink>
-          <NuxtLink to="/admin/history" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">История возвратов</NuxtLink>
-          <NuxtLink to="/admin/reviews" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Отзывы о заказах</NuxtLink>
-          <NuxtLink to="/admin/manual" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Добавить заказ вручную</NuxtLink>
-        </div>
-
-        <!--  Центр пользователей -->
-        <div>
-          <p class="text-gray-500 font-medium mt-4 mb-1">👥 Центр пользователей</p>
-          <NuxtLink to="/admin/users/" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Список участников</NuxtLink>
-          <NuxtLink to="/admin/levels" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Уровни участников</NuxtLink>
-        </div>
-
-
-        <!--  Финансовые операции-->
-        <div>
-          <p class="text-gray-500 font-medium mt-4 mb-1">💳 Финансовые операции</p>
-          <NuxtLink to="/admin/withdrawals" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Запросы на вывод</NuxtLink>
-          <NuxtLink to="/admin/transactions" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">История транзакций</NuxtLink>
-          <NuxtLink to="/admin/bonuses" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Начисление бонусов</NuxtLink>
-        </div>
-
-
-
-              <!-- Статистика и отчёты-->
-        <div>
-          <p class="text-gray-500 font-medium mt-4 mb-1">📊 Статистика и отчёты</p>
-          <NuxtLink to="/admin/stats" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Общая статистика</NuxtLink>
-          <NuxtLink to="/admin/sales-report" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Отчёт по продажам</NuxtLink>
-        </div>
-
-
-             <!-- Обратный выкуп / переработка-->
-        <div>
-          <p class="text-gray-500 font-medium mt-4 mb-1">🔁 Переработка / выкуп</p>
-          <NuxtLink to="/admin/buybacks" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Выкупы клиентов</NuxtLink>
-          <NuxtLink to="/admin/manualbuybacks" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Ручная переработка</NuxtLink>
-        </div>
-
-
-                  <!-- Рефералы и менеджеры-->
-        <div>
-            <p class="text-gray-500 font-medium mt-4 mb-1">🔗 Реферальная система</p>
-            <NuxtLink to="/admin/referrals" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Ссылки и активность</NuxtLink>
-            <NuxtLink to="/admin/clients" class="block pl-2 py-1 text-gray-700 hover:text-blue-600">Клиенты менеджеров</NuxtLink>
-        </div>
-
-
-
+      <nav class="p-4 space-y-2 text-sm">
+        <template v-for="(group, idx) in sidebarItems" :key="idx">
+          <div>
+            <p class="text-gray-500 font-medium mt-4 mb-1">{{ group.label }}</p>
+                <a
+                  v-for="item in group.items"
+                  :key="item.to"
+                  href="#"
+                  @click.prevent="navigate(item.to)"
+                  class="flex items-center gap-2 px-2 py-2 rounded text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+                >
+                  <Icon :name="item.icon" size="16" />
+                  <span>{{ item.text }}</span>
+                </a>
+          </div>
+        </template>
       </nav>
     </aside>
 
@@ -112,8 +56,121 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { useScroll, useStorage } from '@vueuse/core'
+import { useRouter, useRoute } from 'vue-router'
+import { nextTick } from 'vue'
+
+// sidebar state
 const isSidebarOpen = ref(false)
+const savedSidebar = useStorage('sidebarOpen', false)
+
+watch(isSidebarOpen, (val) => {
+  savedSidebar.value = val
+})
+
+// scroll state
+const scroll = useScroll(window)
+const savedY = useStorage('scrollY', 0)
+
+watch(() => scroll.y.value, (y) => {
+  savedY.value = y
+})
+
+// restore sidebar + scroll
+onMounted(() => {
+  if (process.client) {
+    window.history.scrollRestoration = 'auto'
+    const unwatch = useRouter().beforeEach(() => {
+      window.history.scrollRestoration = 'manual'
+      unwatch()
+    })
+    window.addEventListener('unload', () => {
+      window.history.scrollRestoration = 'auto'
+    })
+  }
+})
+
+// navigation logic
+const router = useRouter()
+const route = useRoute()
+
+const navigate = async (to: string) => {
+  if (route.path !== to) {
+    savedY.value = window.scrollY
+    await router.push(to)
+    await nextTick()
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: savedY.value, behavior: 'auto' })
+    })
+  }
+}
+
 const toggleSidebar = () => { isSidebarOpen.value = !isSidebarOpen.value }
 const closeSidebar = () => { isSidebarOpen.value = false }
+
+// sidebar menu
+const sidebarItems = [
+  {
+    label: '🏠 Главное',
+    items: [
+      { text: 'Дашборд', to: '/admin', icon: 'ph:house' },
+    ]
+  },
+  {
+    label: '📦 Центр товаров',
+    items: [
+      { text: 'Управление товарами', to: '/admin/products', icon: 'ph:package' },
+      { text: 'Добавление товара', to: '/admin/create', icon: 'ph:plus-square' },
+      { text: 'Категория товара', to: '/admin/categories', icon: 'ph:tag' },
+      { text: 'Отзывы о товаре', to: '/admin/reviews', icon: 'ph:chat-circle-text' },
+    ]
+  },
+  {
+    label: '💱 Центр транзакций',
+    items: [
+      { text: 'Список заказов', to: '/admin/orders', icon: 'ph:list' },
+      { text: 'Отчёты заказов', to: '/admin/reports', icon: 'ph:chart-bar' },
+      { text: 'История возвратов', to: '/admin/history', icon: 'ph:clock-counter-clockwise' },
+      { text: 'Отзывы о заказах', to: '/admin/reviews', icon: 'ph:chat-centered' },
+      { text: 'Добавить заказ вручную', to: '/admin/manual', icon: 'ph:file-plus' },
+    ]
+  },
+  {
+    label: '👥 Центр пользователей',
+    items: [
+      { text: 'Список участников', to: '/admin/users', icon: 'ph:users' },
+      { text: 'Уровни участников', to: '/admin/levels', icon: 'ph:stairs' },
+    ]
+  },
+  {
+    label: '💳 Финансовые операции',
+    items: [
+      { text: 'Запросы на вывод', to: '/admin/withdrawals', icon: 'ph:currency-dollar-simple' },
+      { text: 'История транзакций', to: '/admin/transactions', icon: 'ph:bank' },
+      { text: 'Начисление бонусов', to: '/admin/bonuses', icon: 'ph:gift' },
+    ]
+  },
+  {
+    label: '📊 Статистика и отчёты',
+    items: [
+      { text: 'Общая статистика', to: '/admin/stats', icon: 'ph:chart-line' },
+      { text: 'Отчёт по продажам', to: '/admin/sales-report', icon: 'ph:shopping-cart' },
+    ]
+  },
+  {
+    label: '🔁 Переработка / выкуп',
+    items: [
+      { text: 'Выкупы клиентов', to: '/admin/buybacks', icon: 'ph:recycle' },
+      { text: 'Ручная переработка', to: '/admin/manualbuybacks', icon: 'ph:toolbox' },
+    ]
+  },
+  {
+    label: '🔗 Реферальная система',
+    items: [
+      { text: 'Ссылки и активность', to: '/admin/referrals', icon: 'ph:link' },
+      { text: 'Клиенты менеджеров', to: '/admin/clients', icon: 'ph:user-list' },
+    ]
+  }
+]
 </script>
