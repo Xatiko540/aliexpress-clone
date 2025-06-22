@@ -160,7 +160,9 @@ const handleSubmit = async () => {
       if (res?.success) {
         await nextTick()
         await authStore.fetchUser()
-        router.push('/')
+        const redirectPath = sessionStorage.getItem('redirectAfterAuth') || (authStore.user?.role === 'admin' ? '/admin' : '/')
+        sessionStorage.removeItem('redirectAfterAuth')
+        router.push(redirectPath)
       } else {
         errorMessage.value = res?.message || 'Login/Registration Error'
       }

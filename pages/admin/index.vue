@@ -1,4 +1,5 @@
 <template>
+    <div v-if="authStore.isInitialized">
   <AdminLayout>
     <!-- Page Content -->
     <main class="p-6">
@@ -38,11 +39,23 @@
       </ClientOnly>
     </main>
   </AdminLayout>
+  </div>
 </template>
 
 <script setup>
 import AdminLayout from '@/layouts/admin.vue'
 import { onMounted, ref } from 'vue'
+
+import { useAuthStore } from '~/stores/auth'
+
+const authStore = useAuthStore()
+
+onMounted(async () => {
+  if (!authStore.isInitialized) {
+    await authStore.fetchUser()
+  }
+  await fetchStats()
+})
 
 const products = ref([])
 const orders = ref([])

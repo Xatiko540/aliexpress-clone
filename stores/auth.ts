@@ -5,7 +5,10 @@ interface UserPayload {
   email: string
   avatar?: string
   username?: string
+  role?: string
 }
+
+
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -21,7 +24,13 @@ export const useAuthStore = defineStore('auth', {
 
           console.log('✅ [authStore] fetchUser() user:', user)
 
-          this.user = { id: user.id, email: user.email }
+            this.user = {
+            id: user.id,
+            email: user.email,
+            avatar: user.avatar || '',
+            username: user.username || '',
+            role: user.role || 'user'
+          } as UserPayload
           this.token = user.token ?? null
         } catch (err) {
           // console.error('❌ Ошибка при получении пользователя:', err)

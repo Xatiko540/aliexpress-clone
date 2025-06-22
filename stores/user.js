@@ -8,12 +8,22 @@ import { defineStore } from 'pinia'
  * @property {string} url
  */
 
+/**
+ * @typedef {Object} User
+ * @property {string} id
+ * @property {string} email
+ * @property {string} [username]
+ * @property {string} [avatar]
+ * @property {string} [role]
+ */
+
 export const useUserStore = defineStore('user', {
   state: () => ({
+    /** @type {User|null} */
     user: null,
+
     isMenuOverlay: false,
     isLoading: false,
-
 
     /** @type {Product[]} */
     cart: [],
@@ -24,14 +34,10 @@ export const useUserStore = defineStore('user', {
   actions: {
     async fetchUser() {
       try {
-      const resp = await $fetch('/api/user', { credentials: 'include' });
-      if (!resp) {
-        this.user = null;
-      } else {
-        this.user = { ...resp };
-      }
+        /** @type {User} */
+        const resp = await $fetch('/api/user', { credentials: 'include' })
+        this.user = resp
       } catch (error) {
-        // console.error('Ошибка при получении пользователя:', error)
         this.user = null
       }
     }

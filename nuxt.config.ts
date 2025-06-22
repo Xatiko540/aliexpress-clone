@@ -1,8 +1,4 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
-
-
-
-export default defineNuxtConfig(<any>{
+export default defineNuxtConfig({
   pages: true,
 
   modules: [
@@ -15,23 +11,20 @@ export default defineNuxtConfig(<any>{
     '@nuxt-modules/compression',
     '@vite-pwa/nuxt',
     '@formkit/auto-animate',
-  
+    '@nuxtjs/robots',
+    '@nuxtjs/sitemap'
   ],
-
-  
-
 
   plugins: [
     '~/plugins/piniaPersist.client.ts',
-    '~/plugins/apexcharts.client.ts' 
+    '~/plugins/apexcharts.client.ts'
   ],
 
-  // 👇 PWA конфигурация
   pwa: {
     registerType: 'autoUpdate',
-        workbox: {
-    navigateFallback: '/',
-    globPatterns: ['**/*.{js,css,html,png,svg,json,ico,webmanifest}'],
+    workbox: {
+      navigateFallback: '/',
+      globPatterns: ['**/*.{js,css,html,png,svg,json,ico,webmanifest}'],
     },
     manifest: {
       name: 'AliExpress',
@@ -41,62 +34,48 @@ export default defineNuxtConfig(<any>{
       background_color: '#ffffff',
       theme_color: '#FF4646',
       icons: [
-        {
-          src: '/AliExpress-logo.png',
-          sizes: '192x192',
-          type: 'image/png',
-        },
-        {
-          src: '/AliExpress-logo.png',
-          sizes: '512x512',
-          type: 'image/png',
-        },
+        { src: '/AliExpress-logo.png', sizes: '192x192', type: 'image/png' },
+        { src: '/AliExpress-logo.png', sizes: '512x512', type: 'image/png' },
       ]
     }
   },
 
-i18n: {
-  locales: [
-    { code: 'ru', file: 'ru.json' },
-    { code: 'en', file: 'en.json' }
-  ],
-  lazy: true,
-  langDir: 'locales/',
-  defaultLocale: 'en',
-  strategy: 'prefix_except_default',
+// @ts-ignore: robots not in default config types
+robots: [
+  {
+    userAgent: '*',
+    disallow: '/admin',
+    sitemap: 'https://aliwebb.xyz/sitemap.xml'
+  }
+],
 
-experimental: {
-    bundle: {
-      optimizeTranslationDirective: false
-    }
+  i18n: {
+    locales: [
+      { code: 'ru', file: 'ru.json' },
+      { code: 'en', file: 'en.json' }
+    ],
+    lazy: true,
+    langDir: 'locales/',
+    defaultLocale: 'en',
+    strategy: 'prefix_except_default',
   },
 
-},
-
-
-runtimeConfig: {
-  jwtSecret: process.env.JWT_SECRET || 'supersecretkey123',
-  smtpUser: process.env.SMTP_USER,
-  smtpPass: process.env.SMTP_PASS,
-  public: {
-    stripePk: process.env.STRIPE_PK_KEY || '',
+  runtimeConfig: {
+    jwtSecret: process.env.JWT_SECRET || 'supersecretkey123',
+    smtpUser: process.env.SMTP_USER,
+    smtpPass: process.env.SMTP_PASS,
+    public: {
+      stripePk: process.env.STRIPE_PK_KEY || '',
+    },
   },
-},
 
-app: {
-  head: {
-    link: [
-      { rel: 'manifest', href: '/manifest.webmanifest' }
-    ],
-    script: [
-      { src: 'https://js.stripe.com/v3/', defer: true },
-    ],
-    meta: [
-      { name: 'referrer', content: 'no-referrer-when-downgrade' },
-    ],
+  app: {
+    head: {
+      link: [{ rel: 'manifest', href: '/manifest.webmanifest' }],
+      script: [{ src: 'https://js.stripe.com/v3/', defer: true }],
+      meta: [{ name: 'referrer', content: 'no-referrer-when-downgrade' }],
+    },
   },
-  
-},
 
   nitro: {
     compressPublicAssets: true,
@@ -107,8 +86,5 @@ app: {
     externals: {
       inline: ['jsonwebtoken']
     }
-  },
-
-
-
+  }
 })

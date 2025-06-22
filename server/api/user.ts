@@ -55,6 +55,7 @@ export default defineEventHandler(async (event) => {
     email: user.email,
     username: user.username || '',
     avatar: user.avatar || '',
+    role: user.role || 'user', // 🛠 ДОБАВЛЕНО
     token,
   }
 })
