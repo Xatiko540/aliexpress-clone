@@ -4,11 +4,57 @@
       <h1 class="text-2xl font-bold mb-6">{{ $t('settings.title') }}</h1>
 
       <div class="bg-white rounded-lg p-6 shadow-md space-y-6">
-
         <!-- User Info -->
         <div>
           <h2 class="text-lg font-semibold mb-2">{{ $t('settings.profile') }}</h2>
           <div class="text-sm">{{ $t('settings.email') }}: <strong>{{ user?.email }}</strong></div>
+          <div class="text-sm mt-1">Баланс: <strong>{{ user?.balance }}₽</strong></div>
+        </div>
+
+        <hr />
+
+        <!-- Transactions -->
+        <div>
+          <h2 class="text-lg font-semibold mb-2">История транзакций</h2>
+          <ul class="text-sm list-disc list-inside">
+            <li v-for="tx in transactions" :key="tx.id">{{ tx.type }}: {{ tx.amount }}₽</li>
+          </ul>
+        </div>
+
+        <hr />
+
+          <form @submit.prevent="submitStripeTopup" class="space-y-2">
+            <input
+              type="number"
+              v-model.number="topUpAmount"
+              placeholder="Сумма в копейках"
+              class="border rounded w-full p-2"
+              @input="handleTopupAmountChange"
+              min="1"
+            />
+            <div v-show="stripeReady" id="topup-card-element" class="border border-gray-300 p-2 rounded" />
+            <p id="topup-card-error" class="text-red-600 text-sm font-medium" />
+            <button
+              type="submit"
+              class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600"
+              :disabled="isProcessingTopup || !stripeReady"
+              :class="isProcessingTopup ? 'opacity-60' : ''"
+            >
+              <Icon v-if="isProcessingTopup" name="eos-icons:loading" />
+              <span v-else>Оплатить и пополнить</span>
+            </button>
+          </form>
+
+        <hr />
+
+        <!-- Withdrawal Request -->
+        <div>
+          <h2 class="text-lg font-semibold mb-2">Вывод средств</h2>
+          <form @submit.prevent="submitWithdraw" class="space-y-2">
+            <input type="number" v-model.number="withdrawAmount" placeholder="Сумма" class="border rounded w-full p-2" />
+            <input type="text" v-model="cardInfo" placeholder="Карта (**** **** **** 1234)" class="border rounded w-full p-2" />
+            <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Запросить вывод</button>
+          </form>
         </div>
 
         <hr />
@@ -18,9 +64,7 @@
           <h2 class="text-lg font-semibold mb-2">{{ $t('settings.updateTitle') }}</h2>
           <form @submit.prevent="updatePassword" class="space-y-2">
             <input type="password" v-model="newPassword" :placeholder="$t('settings.newPassword')" class="border rounded w-full p-2" />
-            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-              {{ $t('settings.updateBtn') }}
-            </button>
+            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">{{ $t('settings.updateBtn') }}</button>
           </form>
         </div>
 
@@ -29,50 +73,103 @@
         <!-- Delete Account -->
         <div>
           <h2 class="text-lg font-semibold mb-2 text-red-600">{{ $t('settings.dangerTitle') }}</h2>
-          <button @click="deleteAccount" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-            {{ $t('settings.deleteBtn') }}
-          </button>
+          <button @click="deleteAccount" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">{{ $t('settings.deleteBtn') }}</button>
         </div>
-
       </div>
     </div>
   </MainLayout>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '~/stores/auth'
-import MainLayout from '~/layouts/MainLayout.vue'
-import { useCookie } from '#app'
 import { useUserStore } from '~/stores/user'
-import { onMounted } from 'vue'
-
+import MainLayout from '~/layouts/MainLayout.vue'
+import { useCookie, useRuntimeConfig } from '#app'
 import { useI18n } from 'vue-i18n'
 
 const { t: $t } = useI18n()
 
 const authStore = useAuthStore()
-const router = useRouter()
-const user = authStore.user
 const userStore = useUserStore()
+const user = authStore.user
+const router = useRouter()
 
 const newPassword = ref('')
+const topUpAmount = ref(0)
+const withdrawAmount = ref(0)
+const cardInfo = ref('')
+const transactions = ref([])
 
-const updatePassword = async () => {
-  if (!newPassword.value) return alert('Enter new password')
+let stripeTopup = null
+let topupElements = null
+let topupCard = null
+let topupClientSecret = null
+const isProcessingTopup = ref(false)
+const stripeReady = ref(false)
+
+
+const handleTopupAmountChange = () => {
+  stripeReady.value = false
+  if (topUpAmount.value > 0) stripeTopupInit()
+}
+
+const stripeTopupInit = async () => {
+  const runtimeConfig = useRuntimeConfig()
+  stripeTopup = Stripe(runtimeConfig.public.stripePk)
 
   try {
-    await $fetch('/api/update-password', {
+      console.log('🔍 init topup', topUpAmount.value)
+
+      const res = await $fetch('/api/stripe/paymentintent', {
+        method: 'POST',
+        credentials: 'include',
+        body: {
+          amount: topUpAmount.value,
+          type: 'topup'
+        }
+      }).catch(err => {
+        console.error('❌ paymentintent error:', err.data)
+        throw err
+      })
+    topupClientSecret = res.client_secret
+
+    topupElements = stripeTopup.elements()
+    topupCard = topupElements.create('card')
+    topupCard.mount('#topup-card-element')
+    topupCard.on('change', (event) => {
+      document.querySelector('#topup-card-error').textContent = event.error?.message || ''
+    })
+    stripeReady.value = true
+  } catch (e) {
+    stripeReady.value = false
+    document.querySelector('#topup-card-error').textContent = 'Ошибка инициализации Stripe'
+  }
+}
+
+watch(() => topUpAmount.value, () => {
+  if (topUpAmount.value > 0) stripeTopupInit()
+})
+
+const submitStripeTopup = async () => {
+  isProcessingTopup.value = true
+  const result = await stripeTopup.confirmCardPayment(topupClientSecret, {
+    payment_method: { card: topupCard }
+  })
+
+  if (result.error) {
+    document.querySelector('#topup-card-error').textContent = result.error.message
+    isProcessingTopup.value = false
+  } else {
+    await $fetch('/api/topup-request', {
       method: 'POST',
       body: {
-        userId: user.id,
-        newPassword: newPassword.value
+        amount: topUpAmount.value,
+        stripeId: result.paymentIntent.id
       }
     })
-    alert('Password updated')
-  } catch {
-    alert('Error updating password')
+    router.push('/success') 
   }
 }
 
@@ -80,11 +177,39 @@ onMounted(async () => {
   userStore.isLoading = true
   await authStore.fetchUser()
   userStore.isLoading = false
+  transactions.value = await $fetch('/api/transactions')
 })
+
+const updatePassword = async () => {
+  if (!newPassword.value) return alert('Enter new password')
+  try {
+    await $fetch('/api/update-password', {
+      method: 'POST',
+      body: { userId: user.id, newPassword: newPassword.value }
+    })
+    router.push('/success') // ✅ перенаправляем
+  } catch {
+    alert('Error updating password')
+  }
+}
+
+const submitWithdraw = async () => {
+  try {
+    await $fetch('/api/withdrawal-request', {
+      method: 'POST',
+      body: {
+        amount: withdrawAmount.value,
+        cardInfo: cardInfo.value
+      }
+    })
+    router.push('/success') // ✅ перенаправляем
+  } catch (e) {
+    alert('Ошибка: ' + e?.data?.message)
+  }
+}
 
 const deleteAccount = async () => {
   if (!confirm('Are you sure you want to delete your account?')) return
-
   try {
     await $fetch('/api/delete-user', {
       method: 'POST',
@@ -97,8 +222,4 @@ const deleteAccount = async () => {
     alert('Error deleting account')
   }
 }
-
-
-
-
 </script>

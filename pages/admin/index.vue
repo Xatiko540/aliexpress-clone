@@ -1,107 +1,132 @@
 <template>
-    <div v-if="authStore.isInitialized">
   <AdminLayout>
-    <!-- Page Content -->
-    <main class="p-6">
-      <!-- Статистика -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white shadow rounded p-4">
-          <h3 class="text-sm text-gray-500">Всего товаров</h3>
-          <p class="text-2xl font-bold">{{ products.length }}</p>
+    <div class="p-6 space-y-8">
+
+      <!-- Основная статистика -->
+      <div>
+        <h2 class="text-xl font-bold mb-4">Общая статистика</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white shadow rounded p-4">
+            <h3 class="text-sm text-gray-500">Всего товаров</h3>
+            <p class="text-2xl font-bold">{{ products.length }}</p>
+          </div>
+          <div class="bg-white shadow rounded p-4">
+            <h3 class="text-sm text-gray-500">Активные заказы</h3>
+            <p class="text-2xl font-bold">{{ orders.length }}</p>
+          </div>
+          <div class="bg-white shadow rounded p-4">
+            <h3 class="text-sm text-gray-500">Пользователи</h3>
+            <p class="text-2xl font-bold">{{ users.length }}</p>
+          </div>
+          <div class="bg-white shadow rounded p-4">
+            <h3 class="text-sm text-gray-500">Продажи (₽)</h3>
+            <p class="text-2xl font-bold">{{ totalSales }}</p>
+          </div>
         </div>
-        <div class="bg-white shadow rounded p-4">
-          <h3 class="text-sm text-gray-500">Активные заказы</h3>
-          <p class="text-2xl font-bold">{{ orders.length }}</p>
-        </div>
-        <div class="bg-white shadow rounded p-4">
-          <h3 class="text-sm text-gray-500">Пользователи</h3>
-          <p class="text-2xl font-bold">{{ users.length }}</p>
-        </div>
-        <div class="bg-white shadow rounded p-4">
-          <h3 class="text-sm text-gray-500">Продажи (₽)</h3>
-          <p class="text-2xl font-bold">{{ totalSales }}</p>
+      </div>
+
+      <!-- Финансовая статистика -->
+      <div>
+        <h2 class="text-xl font-bold mb-4">Финансы</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="bg-white shadow rounded p-4">
+            <h3 class="text-sm text-gray-500">Активные заявки на пополнение</h3>
+            <p class="text-2xl font-bold">{{ topups.length }}</p>
+          </div>
+          <div class="bg-white shadow rounded p-4">
+            <h3 class="text-sm text-gray-500">Ожидают вывода средств</h3>
+            <p class="text-2xl font-bold">{{ withdrawals.length }}</p>
+          </div>
+          <div class="bg-white shadow rounded p-4">
+            <h3 class="text-sm text-gray-500">Общий баланс пользователей</h3>
+            <p class="text-2xl font-bold">{{ totalBalance }}₽</p>
+          </div>
         </div>
       </div>
 
       <!-- Графики -->
       <ClientOnly>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="bg-white rounded shadow p-4">
+          <div class="bg-white shadow rounded p-4">
             <apexchart type="line" height="300" :options="chartOptions.sales" :series="series.sales" />
           </div>
-          <div class="bg-white rounded shadow p-4">
+          <div class="bg-white shadow rounded p-4">
             <apexchart type="bar" height="300" :options="chartOptions.orders" :series="series.orders" />
           </div>
-          <div class="bg-white rounded shadow p-4 md:col-span-2">
+          <div class="bg-white shadow rounded p-4 md:col-span-2">
             <apexchart type="area" height="300" :options="chartOptions.users" :series="series.users" />
           </div>
         </div>
       </ClientOnly>
-    </main>
+
+    </div>
   </AdminLayout>
-  </div>
 </template>
 
 <script setup>
 import AdminLayout from '@/layouts/admin.vue'
-import { onMounted, ref } from 'vue'
-
+import { ref, onMounted } from 'vue'
 import { useAuthStore } from '~/stores/auth'
+import { useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
+const router = useRouter()
+
+const products = ref([])
+const orders = ref([])
+const users = ref([])
+const topups = ref([])
+const withdrawals = ref([])
+const totalSales = ref(0)
+const totalBalance = ref(0)
+
+const fetchStats = async () => {
+  const results = await Promise.allSettled([
+    $fetch('/api/prisma/get-all-products'),
+    $fetch('/api/prisma/get-all-orders'),
+    $fetch('/api/prisma/get-all-users'),
+    $fetch('/api/admin/topup-requests?status=PENDING', { credentials: 'include' }),
+    $fetch('/api/admin/withdrawals?status=PENDING', { credentials: 'include' }),
+  ])
+
+  const [productsRes, ordersRes, usersRes, topupsRes, withdrawalsRes] = results
+
+  products.value = productsRes.status === 'fulfilled' ? productsRes.value : []
+  orders.value = ordersRes.status === 'fulfilled' ? ordersRes.value : []
+  users.value = usersRes.status === 'fulfilled' ? usersRes.value : []
+  topups.value = topupsRes.status === 'fulfilled' ? topupsRes.value.data : []
+  withdrawals.value = withdrawalsRes.status === 'fulfilled' ? withdrawalsRes.value.data : []
+
+  totalSales.value = orders.value.reduce((sum, o) => sum + (o.total || 0), 0)
+  totalBalance.value = users.value.reduce((sum, u) => sum + (u.balance || 0), 0)
+}
 
 onMounted(async () => {
   if (!authStore.isInitialized) {
     await authStore.fetchUser()
   }
+
+  // const user = authStore.user
+  // if (!user) return router.push('/auth')
+  // if (user.role !== 'admin') {
+  //   alert('Доступ запрещён: только для администраторов')
+  //   return router.push('/')
+  // }
+
   await fetchStats()
 })
 
-const products = ref([])
-const orders = ref([])
-const users = ref([])
-const totalSales = ref(0)
-
-const fetchStats = async () => {
-  const res1 = await useFetch('/api/prisma/get-all-products')
-  const res2 = await useFetch('/api/prisma/get-all-orders')
-  const res3 = await useFetch('/api/prisma/get-all-users')
-
-  products.value = res1.data.value || []
-  orders.value = res2.data.value || []
-  users.value = res3.data.value || []
-
-  totalSales.value = orders.value.reduce((sum, order) => sum + (order.total || 0), 0)
-}
-onMounted(fetchStats)
-
 const series = {
-  sales: [{
-    name: 'Продажи',
-    data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
-  }],
-  orders: [{
-    name: 'Заказы',
-    data: [5, 15, 20, 30, 25, 35, 40, 38, 50]
-  }],
-  users: [{
-    name: 'Пользователи',
-    data: [100, 120, 150, 200, 250, 300, 400, 500, 600]
-  }]
+  sales: [{ name: 'Продажи', data: [10, 41, 35, 51, 49, 62, 69, 91, 100, 110, 95, 130] }],
+  orders: [{ name: 'Заказы', data: [5, 15, 20, 30, 25, 35, 40, 38, 50, 60, 45, 70] }],
+  users: [{ name: 'Пользователи', data: [100, 120, 150, 200, 250, 300, 400, 500, 600, 700, 800, 900] }]
 }
+
+const monthLabels = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек']
 
 const chartOptions = {
-  sales: {
-    chart: { id: 'sales' },
-    xaxis: { categories: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен'] }
-  },
-  orders: {
-    chart: { id: 'orders' },
-    xaxis: { categories: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен'] }
-  },
-  users: {
-    chart: { id: 'users' },
-    xaxis: { categories: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен'] }
-  }
+  sales: { chart: { id: 'sales' }, xaxis: { categories: monthLabels } },
+  orders: { chart: { id: 'orders' }, xaxis: { categories: monthLabels } },
+  users: { chart: { id: 'users' }, xaxis: { categories: monthLabels } }
 }
 </script>

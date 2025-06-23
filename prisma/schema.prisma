@@ -86,6 +86,7 @@ model User {
   activities   ActivityLog[]
   referrals    ReferralLink[] @relation("UserReferrals")
   products     Products[]
+  topups    TopUpRequest[]
 }
 
 model BankCard {
@@ -182,4 +183,20 @@ model PasswordResetCode {
   code      String
   expiresAt DateTime
   createdAt DateTime @default(now())
+}
+
+model TopUpRequest {
+  id        Int          @id @default(autoincrement())
+  userId    String       @db.Uuid
+  amount    Int
+  status    TopUpStatus  @default(PENDING)
+  createdAt DateTime     @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+enum TopUpStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

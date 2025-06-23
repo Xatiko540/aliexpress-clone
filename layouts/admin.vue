@@ -33,20 +33,20 @@
     <!-- Content Area -->
     <div class="flex-1 flex flex-col min-h-screen">
       <!-- Header / App Bar -->
-      <header class="bg-white border-b shadow-sm p-4 flex justify-between items-center">
-        <button @click="toggleSidebar" class="lg:hidden p-2 rounded-full hover:bg-gray-200">
-          <Icon name="mdi:menu" size="24" />
-        </button>
-        <h1 class="text-lg font-semibold hidden lg:block">Админ Панель</h1>
-        <div class="space-x-2">
-          <button class="p-2 rounded-full hover:bg-gray-200">
-            <Icon name="ph:gear" size="20" />
-          </button>
-          <button class="p-2 rounded-full hover:bg-gray-200">
-            <Icon name="ph:user-circle" size="20" />
-          </button>
+    <header class="bg-white border-b shadow-sm p-4 flex justify-between items-center">
+      <button @click="toggleSidebar" class="lg:hidden p-2 rounded-full hover:bg-gray-200">
+        <Icon name="mdi:menu" size="24" />
+      </button>
+      <h1 class="text-lg font-semibold hidden lg:block">Админ Панель</h1>
+      <div class="flex items-center space-x-4">
+        <div class="text-sm text-gray-600">
+          {{ user?.email || '—' }}
         </div>
-      </header>
+        <button class="p-2 rounded-full hover:bg-gray-200" @click="logout">
+          <Icon name="ph:sign-out" size="20" />
+        </button>
+      </div>
+    </header>
 
       <!-- Dynamic Slot Content -->
       <main class="flex-1 p-4">
@@ -60,6 +60,20 @@
 import { useScroll, useStorage } from '@vueuse/core'
 import { useRouter, useRoute } from 'vue-router'
 import { nextTick } from 'vue'
+
+
+import { useAuthStore } from '~/stores/auth'
+import { onMounted } from 'vue'
+
+const authStore = useAuthStore()
+const router = useRouter()
+const user = computed(() => authStore.user)
+
+const logout = () => {
+  useCookie('auth_token').value = null
+  authStore.logout()
+  router.push('/auth')
+}
 
 // sidebar state
 const isSidebarOpen = ref(false)
@@ -92,7 +106,6 @@ onMounted(() => {
 })
 
 // navigation logic
-const router = useRouter()
 const route = useRoute()
 
 const navigate = async (to: string) => {
@@ -146,8 +159,8 @@ const sidebarItems = [
   {
     label: '💳 Финансовые операции',
     items: [
-      { text: 'Запросы на вывод', to: '/admin/withdrawals', icon: 'ph:currency-dollar-simple' },
-      { text: 'История транзакций', to: '/admin/transactions', icon: 'ph:bank' },
+      { text: 'Запросы на вывод', to: '/admin/finance/withdrawals', icon: 'ph:currency-dollar-simple' },
+      { text: 'История транзакций', to: '/admin/finance/topups', icon: 'ph:bank' },
       { text: 'Начисление бонусов', to: '/admin/bonuses', icon: 'ph:gift' },
     ]
   },

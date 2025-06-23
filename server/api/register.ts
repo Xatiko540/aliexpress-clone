@@ -2,6 +2,7 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcrypt'
 import nodemailer from 'nodemailer'
+import jwt from 'jsonwebtoken'
 
 const prisma = new PrismaClient()
 
@@ -30,6 +31,19 @@ export default defineEventHandler(async (event) => {
 
   const config = useRuntimeConfig()
 
+  const token = jwt.sign(
+  { id: user.id, email: user.email },
+  config.jwtSecret,
+  { expiresIn: '7d' }
+)
+
+setCookie(event, 'auth_token', token, {
+  httpOnly: true,
+  sameSite: true,
+  maxAge: 60 * 60 * 24 * 7,
+  path: '/' // ОБЯЗАТЕЛЕН!
+})
+
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
@@ -52,6 +66,7 @@ export default defineEventHandler(async (event) => {
   return {
     success: true,
     message: 'User registered and email sent',
+    token, 
     user: {
       id: user.id,
       email: user.email
