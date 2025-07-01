@@ -66,6 +66,25 @@
                         </div>
                         <div class="border-b"/>
             <ul class="bg-white ">
+
+              <li 
+                @click="navigateTo(`/chat?name=${authStore.user?.username ?? ' anonymity'}`)"
+                class="text-[13px] py-2 px-4 w-full hover:bg-gray-200 flex items-center gap-2"
+              >
+                <!-- <Icon name="fluent:chat-16-regular" size="16" /> -->
+                <span>Message Center</span>
+              </li>
+
+
+              <li 
+                  @click="navigateTo('/topup')"
+                  class="text-[13px] py-2 px-4 w-full hover:bg-gray-200 flex items-center gap-2"
+                >
+                  <!-- <Icon name="mdi:coin-outline" size="16" /> -->
+                  <span>My coins</span>
+                </li>
+              
+              
                 <li 
                     @click="navigateTo('/orders')"
                     class="text-[13px] py-2 px-4 w-full hover:bg-gray-200"
@@ -307,6 +326,8 @@ import { useAuthStore } from '~/stores/auth'
 import { useUserStore } from '~/stores/user'
 import { useI18n } from 'vue-i18n'
 
+import { useDebounceFn } from '@vueuse/core'
+
 const { t: $t, locale } = useI18n()
 
 const authStore = useAuthStore()
@@ -360,22 +381,22 @@ watch(() => locale.value, (lang) => {
 
 const items = ref<{ id: number; title: string; price: number; url: string }[]>([])
 
-const searchByName = useDebounce(async () => {
+const searchByName = useDebounceFn(async () => {
   isSearching.value = true
   const { data } = await useFetch(`/api/prisma/search-by-name/${searchItem.value}`)
-  items.value = data.value ?? [] // 🔥 если null — ставим пустой массив
+  items.value = data.value ?? []
   isSearching.value = false
 }, 100)
 
 watch(() => searchItem.value, async () => {
   if (!searchItem.value) {
     setTimeout(() => {
-      items.value = [] // 🔥 был null — поменяли на []
+      items.value = []
       isSearching.value = false
     }, 500)
     return
   }
-  searchByName()
+  searchByName() // ← теперь работает корректно
 })
 
 // 🔥 Чистый logout

@@ -14,13 +14,13 @@
       class="rounded-md overflow-hidden shadow"
     >
       <SwiperSlide>
-        <img src="/baner.png" alt="Баннер 1" class="w-full object-cover max-h-[400px] sm:max-h-[300px] xs:max-h-[200px]" />
+        <img src="/1920x1720.webp" alt="Баннер 1" class="w-full object-cover max-h-[400px] sm:max-h-[300px] xs:max-h-[200px]" />
       </SwiperSlide>
       <SwiperSlide>
-        <img src="/AliExpress-logo.png" alt="Баннер 2" class="w-full object-cover max-h-[400px] sm:max-h-[300px] xs:max-h-[200px]" />
+        <img src="/1920x1720 (1).webp" alt="Баннер 2" class="w-full object-cover max-h-[400px] sm:max-h-[300px] xs:max-h-[200px]" />
       </SwiperSlide>
       <SwiperSlide>
-        <img src="/baner.png" alt="Баннер 3" class="w-full object-cover max-h-[400px] sm:max-h-[300px] xs:max-h-[200px]" />
+        <img src="/1920x1720 (2).webp" alt="Баннер 3" class="w-full object-cover max-h-[400px] sm:max-h-[300px] xs:max-h-[200px]" />
       </SwiperSlide>
     </Swiper>
 

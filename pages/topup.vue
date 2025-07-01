@@ -11,24 +11,72 @@
           <div class="text-sm mt-1">Balance: <strong>{{ user?.balance }}₽</strong></div>
         </div>
 
+        <hr />
 
-
-        <!-- Update Password -->
+        <!-- Transactions -->
         <div>
-          <h2 class="text-lg font-semibold mb-2">{{ $t('settings.updateTitle') }}</h2>
-          <form @submit.prevent="updatePassword" class="space-y-2">
-            <input type="password" v-model="newPassword" :placeholder="$t('settings.newPassword')" class="border rounded w-full p-2" />
-            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">{{ $t('settings.updateBtn') }}</button>
+          <h2 class="text-lg font-semibold mb-2">Transaction history</h2>
+          <ul class="text-sm list-disc list-inside">
+            <li v-for="tx in transactions" :key="tx.id">{{ tx.type }}: {{ tx.amount }}₽</li>
+          </ul>
+        </div>
+
+        <hr />
+
+<form @submit.prevent="submitStripeTopup" class="space-y-4">
+
+  <!-- Платёжные бренды -->
+  <div class="flex items-center gap-3 mb-1">
+    <img src="/visa.png" alt="Visa" class="h-5" />
+    <img src="/mastercard.png" alt="MasterCard" class="h-5" />
+    <img src="/applepay.png" alt="Apple Pay" class="h-5" />
+  </div>
+
+  <!-- Ввод суммы -->
+  <input
+    type="number"
+    v-model.number="topUpAmount"
+    placeholder="Сумма в копейках"
+    class="border border-gray-300 rounded px-3 py-2 w-full focus:ring-2 focus:ring-green-400"
+    @input="handleTopupAmountChange"
+    min="1"
+  />
+
+  <!-- Stripe Card Element -->
+  <div v-show="stripeReady" id="topup-card-element" class="border border-gray-300 p-3 rounded shadow-sm bg-white" />
+
+  <!-- Ошибка Stripe -->
+  <p id="topup-card-error" class="text-red-600 text-sm font-medium"></p>
+
+<!-- Кнопка оплаты -->
+<div class="flex justify-end">
+  <button
+    type="submit"
+    class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-all duration-150 ease-in-out flex items-center gap-2"
+    :disabled="isProcessingTopup || !stripeReady"
+    :class="isProcessingTopup ? 'opacity-60 cursor-not-allowed' : ''"
+  >
+    <Icon v-if="isProcessingTopup" name="eos-icons:loading" />
+    <span v-else>Pay and top up</span>
+  </button>
+</div>
+</form>
+
+        <hr />
+
+
+        <!-- Withdrawal Request -->
+        <div>
+          <h2 class="text-lg font-semibold mb-2">Withdrawal of funds</h2>
+          <form @submit.prevent="submitWithdraw" class="space-y-2">
+            <input type="number" v-model.number="withdrawAmount" placeholder="Sum" class="border rounded w-full p-2" />
+            <input type="text" v-model="cardInfo" placeholder="Card (**** **** **** 1234)" class="border rounded w-full p-2" />
+            <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Request withdrawal</button>
           </form>
         </div>
 
         <hr />
 
-        <!-- Delete Account -->
-        <div>
-          <h2 class="text-lg font-semibold mb-2 text-red-600">{{ $t('settings.dangerTitle') }}</h2>
-          <button @click="deleteAccount" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">{{ $t('settings.deleteBtn') }}</button>
-        </div>
       </div>
     </div>
   </MainLayout>
@@ -104,6 +152,14 @@ const stripeTopupInit = async () => {
 
 watch(() => topUpAmount.value, () => {
   if (topUpAmount.value > 0) stripeTopupInit()
+
+  if (!authStore.isInitialized) return
+
+  if (!authStore.user) {
+    return router.push('/auth')
+  }
+
+
 })
 
 const submitStripeTopup = async () => {

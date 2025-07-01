@@ -60,7 +60,35 @@ const router = useRouter()
 const authStore = useAuthStore()
 const userStore = useUserStore()
 
-const orders = ref([])
+interface Product {
+  id: number
+  title: string
+  description: string
+  url: string
+  price: number
+  category: string
+  created_at: Date | null
+  sellerId: string | null
+}
+
+interface OrderItem {
+  id: number
+  productId: number
+  product: Product
+}
+
+interface Order {
+  id: number
+  stripeId: string
+  name: string
+  address: string
+  zipcode: string
+  city: string
+  country: string
+  orderItem: OrderItem[]
+}
+
+const orders = ref<Order[]>([])
 const isLoading = ref(true)
 
 watchEffect(async () => {
@@ -72,9 +100,18 @@ watchEffect(async () => {
 
   try {
     const { data } = await useAsyncData('orders', () =>
-      $fetch(`/api/prisma/get-all-orders-by-user/${authStore.user.id}`)
+      $fetch(`/api/prisma/get-all-orders-by-user/${authStore.user?.id || ''}`)
     )
-    orders.value = data.value ?? []
+    orders.value = (data.value ?? []).map((order: any) => ({
+      ...order,
+      orderItem: order.orderItem.map((item: any) => ({
+        ...item,
+        product: {
+          ...item.product,
+          created_at: item.product.created_at ? new Date(item.product.created_at) : null
+        }
+      }))
+    }))
   } catch (err) {
     console.error('❌ Fetch orders failed:', err)
   } finally {

@@ -87,6 +87,7 @@ model User {
   referrals    ReferralLink[] @relation("UserReferrals")
   products     Products[]
   topups    TopUpRequest[]
+  chatMessages ChatMessage[]
 }
 
 model BankCard {
@@ -199,4 +200,14 @@ enum TopUpStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+model ChatMessage {
+  id        Int      @id @default(autoincrement())
+  userId    String   @db.Uuid
+  message   String
+  isFromAdmin Boolean @default(false) 
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id])
 }

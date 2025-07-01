@@ -58,6 +58,8 @@
     "pinia-plugin-persistedstate": "^4.3.0",
     "prisma": "^4.16.2",
     "radix-vue": "^1.9.17",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "stripe": "^12.18.0",
     "swiper": "^11.2.8",
     "v-calendar": "^3.1.2",

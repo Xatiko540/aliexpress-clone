@@ -20,6 +20,8 @@
     </div>
 
     <ul class="w-full">
+
+
       <li 
         @click="goTo('settings')" 
         v-if="authStore.user"
@@ -32,6 +34,29 @@
           </div>
         </div>
       </li>
+
+
+
+            <!-- Добавлено: пункт Чат -->
+        <li 
+          v-if="authStore.user"
+          @click="() => { userStore.isMenuOverlay = false; navigateTo(`/chat?name=${authStore.user?.username ?? ' anonymity'}`) }"
+          class="relative flex items-center justify-between py-2.5 border-b px-3 hover:bg-gray-100 cursor-pointer"
+        >
+          <div class="flex items-center text-[20px] font-semibold">
+            <Icon name="fluent:chat-16-regular" size="33" />
+            <span class="pl-4">Message Center</span>
+          </div>
+        </li>
+
+
+        <li 
+          @click="navigateTo('/topup')"
+          class="text-[13px] py-2 px-4 w-full hover:bg-gray-200 flex items-center gap-2"
+        >
+          <Icon name="mdi:coin-outline" size="16" />
+          <span>My coins</span>
+        </li>
 
       <li @click="goTo('categories')" class="relative flex items-center justify-between py-2.5 border-b px-3 hover:bg-gray-100 cursor-pointer">
         <div class="flex items-center text-[20px] font-semibold">

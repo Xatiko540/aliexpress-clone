@@ -59,6 +59,29 @@
         </div>
       </ClientOnly>
 
+
+
+          <!-- Список чатов -->
+    <div v-if="!activeChat" class="chat__list">
+      <div
+        v-for="chat in chats"
+        :key="chat.id"
+        @click="openChat(chat)"
+        class="chat__list__item"
+      >
+        <img :src="chat.avatar || defaultAvatar" class="chat__avatar" />
+        <div class="chat__info">
+          <p class="chat__name">{{ chat.name }}</p>
+          <p class="chat__last">{{ chat.lastMessage }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Активный чат -->
+    <div v-else class="chat__content">
+      <ChatContainer :chat="activeChat" @back="activeChat = null" />
+    </div>
+
     </div>
   </AdminLayout>
 </template>
@@ -68,6 +91,31 @@ import AdminLayout from '@/layouts/admin.vue'
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '~/stores/auth'
 import { useRouter } from 'vue-router'
+import ChatContainer from '@/components/ChatContainer.vue'
+
+const userName = ref(' anonymity')
+const defaultAvatar = '/avatar.svg'
+
+const chats = ref([
+  {
+    id: 1,
+    name: 'support center',
+    lastMessage: 'Reply to message',
+    avatar: '/avatar.svg'
+  },
+  // {
+  //   id: 2,
+  //   name: 'Тест Юзер',
+  //   lastMessage: 'Привет, как дела?',
+  //   avatar: '/avatar.svg'
+  // }
+])
+
+const activeChat = ref(null)
+
+function openChat(chat) {
+  activeChat.value = chat
+}
 
 const authStore = useAuthStore()
 const router = useRouter()
