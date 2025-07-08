@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "avatar" TEXT,
+ADD COLUMN     "role" TEXT DEFAULT 'user',
+ADD COLUMN     "updatedAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "username" TEXT;

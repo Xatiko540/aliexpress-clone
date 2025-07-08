@@ -1,0 +1,213 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Addresses {
+  id         Int       @id @default(autoincrement())
+  userId     String    @db.Uuid
+  name       String
+  address    String
+  zipcode    String
+  city       String
+  country    String
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  user       User      @relation("UserAddresses", fields: [userId], references: [id])
+}
+
+model Orders {
+  id         Int         @id @default(autoincrement())
+  userId     String      @db.Uuid
+  stripeId   String
+  name       String
+  address    String
+  zipcode    String
+  city       String
+  country    String
+  created_at DateTime?   @default(now()) @db.Timestamptz(6)
+  orderItem  OrderItem[]
+  user       User        @relation("UserOrders", fields: [userId], references: [id])
+}
+
+model OrderItem {
+  id            Int            @id @default(autoincrement())
+  orderId       Int
+  productId     Int
+  created_at    DateTime?      @default(now()) @db.Timestamptz(6)
+  order         Orders         @relation(fields: [orderId], references: [id])
+  product       Products       @relation(fields: [productId], references: [id])
+  returnRequest ReturnRequest?
+}
+
+model Products {
+  id          Int            @id @default(autoincrement())
+  title       String
+  description String
+  url         String
+  price       Int
+  category    String
+  created_at  DateTime?      @default(now()) @db.Timestamptz(6)
+  orderItem   OrderItem[]
+  buybacks    BuybackOffer[]
+  sellerId    String?        @db.Uuid
+  seller      User?          @relation(fields: [sellerId], references: [id])
+}
+
+model User {
+  id         String   @id @default(uuid()) @db.Uuid
+  email      String   @unique
+  password   String
+  username   String? // 👈 добавлено
+  role       String?  @default("user") // 👈 добавлено
+  avatar     String? // 👈 добавлено
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime @default(now()) @db.Timestamptz(6) // 👈 добавлено
+  balance    Int      @default(0)
+  reputation Int      @default(0)
+  deals      Int      @default(0)
+  isBlocked  Boolean  @default(false)
+  fullName   String?
+  phone      String?
+  level      Int      @default(1)
+  refCode    String?  @unique
+  managerId  String?
+
+  addresses   Addresses[]    @relation("UserAddresses")
+  orders      Orders[]       @relation("UserOrders")
+  bankCards   BankCard[]     @relation("UserBankCards")
+  withdrawals Withdrawal[]
+  buybacks    BuybackOffer[]
+
+  transactions Transaction[]
+  activities   ActivityLog[]
+  referrals    ReferralLink[] @relation("UserReferrals")
+  products     Products[]
+  topups    TopUpRequest[]
+  chatMessages ChatMessage[]
+}
+
+model BankCard {
+  id         Int      @id @default(autoincrement())
+  userId     String   @db.Uuid
+  name       String
+  cardNumber String
+  expiry     String
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation("UserBankCards", fields: [userId], references: [id])
+}
+
+model ReturnRequest {
+  id          Int          @id @default(autoincrement())
+  orderItemId Int          @unique // 🔥 теперь Prisma доволен
+  status      ReturnStatus @default(NOT_SENT)
+  amount      Int?
+  createdAt   DateTime     @default(now()) @db.Timestamptz(6)
+  confirmed   Boolean      @default(false)
+
+  orderItem OrderItem @relation(fields: [orderItemId], references: [id])
+}
+
+enum ReturnStatus {
+  PENDING
+  NOT_SENT
+  SENT
+  COMPLETED
+}
+
+model Withdrawal {
+  id        Int              @id @default(autoincrement())
+  userId    String           @db.Uuid
+  amount    Int
+  cardInfo  String
+  status    WithdrawalStatus @default(PENDING)
+  createdAt DateTime         @default(now()) @db.Timestamptz(6)
+  user      User             @relation(fields: [userId], references: [id])
+}
+
+enum WithdrawalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model BuybackOffer {
+  id        Int      @id @default(autoincrement())
+  userId    String   @db.Uuid
+  percent   Int      @default(25)
+  productId Int
+  price     Int // Исходная цена
+  reward    Int // Рассчитанная прибыль
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  user      User     @relation(fields: [userId], references: [id])
+  product   Products @relation(fields: [productId], references: [id])
+}
+
+model Transaction {
+  id        Int      @id @default(autoincrement())
+  userId    String   @db.Uuid
+  type      String // Например: "purchase", "withdrawal", "bonus", "buyback", "manual"
+  amount    Int
+  details   String?
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model ReferralLink {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  managerId String   @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  manager User @relation("UserReferrals", fields: [managerId], references: [id])
+}
+
+model ActivityLog {
+  id        Int      @id @default(autoincrement())
+  userId    String   @db.Uuid
+  action    String // Например: "BUY_PRODUCT", "SEND_BUYBACK", "WITHDRAW_REQUEST"
+  meta      String? // JSON-строка, можно хранить доп. детали
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+
+model PasswordResetCode {
+  id        String   @id @default(cuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model TopUpRequest {
+  id        Int          @id @default(autoincrement())
+  userId    String       @db.Uuid
+  amount    Int
+  status    TopUpStatus  @default(PENDING)
+  createdAt DateTime     @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+enum TopUpStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model ChatMessage {
+  id        Int      @id @default(autoincrement())
+  userId    String   @db.Uuid
+  message   String
+  isFromAdmin Boolean @default(false) 
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id])
+}
