@@ -1,0 +1,1 @@
+export { default as SkeletonBox } from './Skeleton.vue'

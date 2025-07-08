@@ -1,0 +1,7 @@
+export { default as UiUiAccordion } from './Accordion.vue'
+export { default as UiAccordionContent } from './AccordionContent.vue'
+export { default as UiAccordionItem } from './AccordionItem.vue'
+export { default as UiAccordionTrigger } from './AccordionTrigger.vue'export { default as Accordion } from './Accordion.vue'
+export { default as AccordionContent } from './AccordionContent.vue'
+export { default as AccordionItem } from './AccordionItem.vue'
+export { default as AccordionTrigger } from './AccordionTrigger.vue'
